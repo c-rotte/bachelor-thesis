@@ -1,0 +1,107 @@
+% !TeX root = ../main.tex
+% Add the above to each chapter to make compiling the PDF easier in some editors.
+
+\chapter{Background}\label{chapter:background}
+
+Typical database engines are optimized for both read and write operations, i.e., point and range lookups as well as point and bulk inserts and updates. This is because general-purpose databases often handle mixed workloads and balance their performance trade-offs between reads and writes.
+
+Apart from databases, however, storage engines are also used for read-heavy services like search indexes or write-heavy services such as stream processing, logging, and SSD caching \cite{lsm_data_stores_leveldb_rocksdb}. These areas have to deal with unevenly distributed workloads, making the use of engines tuned for mixed workloads suboptimal. Especially write-heavy workloads usually suffer from this asymmetry in standard database systems \cite{performace_evaluation}.
+
+\section{Traditional Database Structures}\label{2.1}
+
+Usually, their design forces general-purpose database engines to use in-place writes that often result in multiple random I/O operations \cite{in-place-updates}. Sequential disk reads and writes are generally orders of magnitude faster than random operations \cite{seq_rand}. Nonetheless, depending on the workload, a B$^+$-Tree, for example, has to successively access nodes that often do not reside next to each other on disk. This leads to many random disk reads and writes.\newline
+Additionally, every update operation potentially includes reading the current value from disk and storing the updated value again, which results in two I/O operations. Although we can circumvent this by storing the index entirely in memory, cases with large data sets and limited memory consequently still scale poorly in general \cite{leanstore}. Furthermore, if we have a lot of small values, the index may outgrow the actual working set in size, increasing the needed memory even more. Alternative approaches, like hash-based partitioning, have the same problems \cite{hash_index}.\newline
+While write-focused structures like append-only logs can profit from sequential writes instead of random accesses, key-based reads have to scan the entire log in the worst case. This makes them viable for linear read patterns but impracticable for mixed workloads with random point lookups \cite{i_heart_logs,log_presentation}.
+
+\section{LSM-Trees}
+
+A popular data structure choice for write-focused storage engines is the log-structured merge tree (LSM-Tree) \cite{lsm_tree}. Compared to general-purpose structures like B/B$^+$-Trees, LSM-Trees are designed to handle write operations more efficiently by taking advantage of fast sequential disk accesses.
+
+In memory, LSM-Trees store write operations as encoded messages in a sorted buffer called a "memtable" \cite{lsm_tree}. Consequentially, the average write operation does not require any I/O operation. When the memtable is full, we store it on disk in an immutable index file. While the original design \cite{lsm_tree} references only two levels, $C_0$ (the memtable in memory) and $C_1$ (the index file), modern implementations typically store the messages in multiple "runs" on disk \cite{lsm_b_tree}. Index files with similar sizes are periodically merged into larger sorted files, resulting in multiple tree-like levels with exponentially increasing sizes (see figure \ref{fig:lsm-tree_merges}).\newline
+Because writes are buffered in memory and saving a memtable is done sequentially on disk, LSM-Trees generally increase write performance, especially compared to other general-purpose structures when dealing with limited memory \cite{lsm_tree, lsm_b_tree}.
+
+% FIGURE: https://en.wikipedia.org/wiki/Log-structured_merge-tree#/media/File:LSM_Tree.png
+% https://imgur.com/a/t6ZlQhB
+
+\begin{figure}[h]
+\vspace*{4mm}
+\centering
+\scalebox{0.9}{
+\begin{tikzpicture}[
+	node distance=7mm,
+	default_node/.style={
+		rectangle,
+		draw=black, 
+		%very thick,
+		text centered,
+		minimum height=12mm,
+		pattern=north east lines,
+		pattern color=black
+	},
+	empty_node/.style={
+		rectangle,
+		draw=none, 
+		%very thick,
+		text centered,
+		minimum height=12mm
+	},
+	desc/.style={
+		minimum height=12mm,
+		text width=2cm,
+		text centered
+	},
+	line/.style={
+		->,
+		%very thick
+	}
+	]
+	
+	% Descriptions
+	
+	\node [desc] (D0) {Memory};
+	\node [desc, below=of D0] (D1) {Level 1};
+	\node [desc, below=of D1] (D2) {Level 2};
+	\node [desc, below=of D2] (D3) {Level 3};
+	\node [desc, below=of D3] (D4) {Level 4};
+	
+	% Levels
+	
+	\node [default_node, pattern=none, text width=1.75cm, right=of D0] (memtable) {memtable};
+	
+	\node [default_node, text width=1.75cm, right=of D1] (L1_1) {};
+	\node [default_node, text width=1.75cm, right=of L1_1] (L1_2) {};
+	\node [default_node, text width=1.75cm, right=of L1_2] (L1_3) {};
+	\node [empty_node, text width=1.75cm, right=of L1_3] (L1_4) {...};
+	
+	\node [default_node, text width=4.5cm, right=of D2] (L2_1) {};
+	\node [default_node, text width=4.5cm, right=of L2_1] (L2_2) {};
+	
+	\node [default_node, text width=10cm, right=of D3] (L3) {};
+	
+	\node [default_node, text width=10cm, draw=none, pattern=none, right=of D4] (L4) {...};
+	
+	% Connections
+	
+	\draw[line] (memtable.south -| L1_1.north) -- (L1_1.north);
+	
+	\path [line] (L1_1) edge [below] (L2_1);
+	\path [line] (L1_2) edge [below] (L2_1);
+	
+	\path [line] (L2_1) edge [below] (L3);
+	\path [line] (L2_2) edge [below] (L3);
+	
+	% Separator
+	
+	\draw[dashed] let \p1=(D0),\p2=(D1),\p3=(D1.north west),\p4=(D1.north east) in 
+	(\x3,{(\y1+\y2)/2}) -- (\x4+11.5cm,{(\y1+\y2)/2});
+
+\end{tikzpicture}
+}
+\caption{LSM-Tree Merges}
+\label{fig:lsm-tree_merges}
+\end{figure}
+
+Read operations, however, potentially have to search through multiple files, which again requires randomly accessing the disk multiple times. Thus, reads in LSM-Trees are generally slower than in B$^+$-Trees and similar structures \cite{lsm_b_tree}. In practice, most data stores based on LSM-Trees like Facebook's RocksDB \cite{rocksdb} or Google's LevelDB \cite{leveldb} try to work against this by introducing fence pointers, block caches, and bloom filters, among other techniques. \cite{monkey,lsm_data_stores_leveldb_rocksdb}. Fence pointers contain references to each run's lower and upper bounds, thereby decreasing the number of required I/O operations. A block cache stores frequently accessed file parts that do not have to be read from disk every time.\newline 
+Bloom filters, on the other hand, use additional memory to save overlapping small hashes of the written keys \cite{bloom_filter}. If a key is not found in the filter, a reader can abort its operation, knowing that the key has not been used before. False positives due to hash collisions may occur. Nonetheless, by using only a fraction of the key size for each respective filter, bloom filters can often prevent unnecessary I/O reads for non-existing keys \cite{bloom_filter}.
+
+Although techniques like the ones mentioned above can improve the general read performance of LSM-Trees, they come with a need for additional memory, which in turn again limits the size available for the memtable. Additionally, integrating LSM-Trees into databases with preexisting general purpose structures like B$^+$-Trees requires an additional backend since their base design is fundamentally incompatible with typical I/O management systems like page buffers.

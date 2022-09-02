@@ -1,0 +1,43 @@
+% !TeX root = ../main.tex
+% Add the above to each chapter to make compiling the PDF easier in some editors.
+
+\chapter{Theoretical Performance}\label{chapter:theoretical_performance}
+
+\section{The Parameter $\varepsilon$}
+
+As described in section \ref{section:3.1}, the value of $\varepsilon$ determines the trade-off related to the node size $B$ between the number of pivots/child pointers and the buffer size of each node. Since we use $B^\varepsilon$ for the first and $B-B^\varepsilon$ for the second, the fanout grows exponentially with the value of $\varepsilon$. Smaller values increase the buffer size, thus increasing write throughput, while larger values increase the fanout, therefore decreasing the tree height and increasing read throughput. The original paper proposes $\varepsilon=\frac{1}{2}$ as a good value \cite{b_epsilon_tree}. This doubles the tree height and thus asymptotically halves the read performance compared to a B-Tree since we only have $\sqrt{B}$ space left for the fanout.
+
+Writes, however, can theoretically be performed orders of magnitude faster than the writes in a B-Tree, as shown in the following section. As a result, regarding update operations, B$^\varepsilon$-Trees should prefer "blind" updates over read-modify-write operations as these are bound by the performance of the read operation \cite{b_epsilon_tree}.
+
+\section{Asymptotic Comparison}
+
+Table \ref{tab:asymptotic_comparision} compares the I/O operations needed for inserts and lookups of a B/B$^+$-Tree, a B$^\varepsilon$-Tree as well as an LSM-Tree. $B$ denotes the node size, $N$ the number of stored entries, and $K$ the size of the key range. We focus on I/O operations since these are usually the primary source of performance bottlenecks, as described in section \ref{2.1}. The comparison assumes that all key-value pairs are of the same size and that a maximum of one I/O operation (random seek) is needed to access a node.\newline
+Since we focus on working sets that exceed the memory size, the comparison makes use of the "disk access model" (DAM) \cite{dam,cache-oblivious}, also called the "I/O model", "external memory model" or "cache-aware model". The DAM considers the fact that parts of the data structures are cached in memory as well as the performance differences between random and sequential I/O operations.
+
+\begin{table}[h]
+	\centering
+	\caption{Asymptotic Comparison of the Amortized Number of I/O Operations}
+	\label{tab:asymptotic_comparision}
+	\vspace*{5mm}
+	\begin{tabular}{@{}llll@{}}
+		\toprule
+		& B-Tree / B$^+$-Tree         & B$^\varepsilon$-Tree                                & LSM-Tree                                            \\ \midrule
+		\addlinespace[2mm]
+		Upsert       & $O(\log_B N)$               & $O(\frac{\log_B N}{\varepsilon B^{1-\varepsilon}})$ & $O(\frac{\log_B N}{\varepsilon B^{1-\varepsilon}})$ \\
+		\addlinespace[2mm]
+		Point Lookup & $O(\log_B N)$               & $O(\frac{\log_B N}{\varepsilon})$                   & $O(\frac{\log^2_B N}{\varepsilon})$                 \\
+		\addlinespace[2mm]
+		Range Lookup & $O(\log_B N + \frac{K}{B})$ & $O(\frac{\log_B N}{\varepsilon} + \frac{K}{B})$     & $O(\frac{\log^2_B N}{\varepsilon} + \frac{K}{B})$   \\ 
+		\addlinespace[2mm]
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+The value of $\varepsilon$ determines the fanout of the B$^\varepsilon$-Tree and thus impacts its height. However, when set to a fixed value, it disappears in the asymptotic analysis, leaving the B$^\varepsilon$-Tree with the same lookup complexity as the B-Tree of $O(\log_B N)$ for point and $O(\log_B N + \frac{K}{B})$ for range lookups.\newline
+In the worst case, if all respective buffers are full, we must perform a flush on every level, thus traveling down to the respective leaf node. This creates an upper bound for write operations of $O(\frac{\log_B N}{\varepsilon})$.\newline
+Since write operations in a B$^\varepsilon$-Tree are bundled and flushed together, a B$^\varepsilon$-Tree divides the cost of one write by the size of the upsert buffer. This heavily reduces the net costs for the upsert operation. A value of $\varepsilon=\frac{1}{2}$, for example, divides the cost by $\sqrt{B}$, as described above. Consequently, the node size is directly proportional to the performance gain of writes when compared to a B-Tree.
+
+For the LSM-Tree, we use $B^\varepsilon$ for the factor by which the runs on disk exponentially increase in size to simplify the comparison. This factor behaves similarly to the branch-buffer trade-off of the B$^\varepsilon$-Tree, thus its use as syntactic sugar. Write operations are asymptotically equal when compared to a B$^\varepsilon$-Tree, dividing the costs by $O(\log_B N + \frac{K}{B})$. Lookups, on the other hand, are asymptotically slower than those of a B$^\varepsilon$-Tree with $O(\frac{\log^2_B N}{\varepsilon})$ for point lookups and $O(\frac{\log^2_B N}{\varepsilon} + \frac{K}{B})$ for range lookups. While bloom filters can increase the point lookup performance to $O(\log_B N)$, this does not work if there are messages addressed to the search key in different runs. This is due to the fact that scanning multiple levels defeats the purpose of a bloom filter whose goal is to return early upon queries with non-existent keys. Additionally, bloom filters do not improve the performance of range queries since those have to be performed on all runs in the LSM-Tree as well \cite{massive_datasets}.
+
+From an asymptotic point of view, a B$^\varepsilon$-Tree thus has the read performance of a B-Tree and the write performance of an LSM-Tree, making it the theoretically optimal choice. \cite{b_epsilon_tree}
+

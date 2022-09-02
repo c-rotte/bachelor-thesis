@@ -1,0 +1,777 @@
+% !TeX root = ../main.tex
+% Add the above to each chapter to make compiling the PDF easier in some editors.
+
+\newcommand{\verticalplotscale}{0.89}
+
+\chapter{Evaluation}\label{chapter:evaluation}
+
+\section{Benchmark Setup}
+
+A commonly used benchmark tool to analyze key-value stores is the Yahoo Cloud Serving Benchmark (YCSB) \cite{ycsb}. YCSB uses workload generators with pre-defined templates and an interface for inserting, updating, deleting, and reading single key-value tuples, as well as performing range scans.\newline
+Because YCSB is written in Java, one has to create a separate interface to analyze structures purely written in C++ with YCSB. Alternatively, there are ports like YCSB-C\footnote{\href{https://github.com/basicthinker/YCSB-C}{https://github.com/basicthinker/YCSB-C}}, its successor YCSB-cpp\footnote{\href{https://github.com/ls4154/YCSB-cpp}{https://github.com/ls4154/YCSB-cpp}} or, what we will use in the scope of this thesis, the Unum Cloud Serving Benchmark (UCSB) \cite{ucsb}, a rewrite of YCSB based on the Google Benchmark\footnote{\href{https://github.com/google/benchmark}{https://github.com/google/benchmark}} library \cite{unum_ucsb}.
+
+In addition to the B$^\varepsilon$-Tree, we additionally built a B$^+$-Tree for comparison. It uses the same techniques as the B$^\varepsilon$-Tree by splitting nodes preemptively to enable exclusive lock coupling and trying to travel down to the leaf level with shared lock coupling first. The key-value pairs are stored directly in the leaf nodes as well.
+
+If not specified otherwise, we prepare the following test runs using workloads with the Zipfian distribution to simulate "hot" keys with a higher probability of being targeted. For the Zipfian generator, YCSB and UCSB both use a $\vartheta$ ("Zipfian constant") of 0.99. We set the key size to 8B and the value size to 100B, similar to the default configuration of YCSB. Additionally, both the B$^\varepsilon$-Tree and the B$^+$-Tree will work with a typical page size of 16KiB.
+
+We run all benchmarks on a system with an Intel i9-7900X (10 cores, 20 hardware threads) with 128GiB of RAM and a Samsung SSD 970 EVO running Ubuntu 22.04.
+
+\section{Analyzing the Impact of $\varepsilon$}
+
+First, the performance of our B$^\varepsilon$-Tree for different values of $\varepsilon$ is evaluated. In order to independently analyze the behavior, we make use of our "optimal" buffer (see section \ref{5.1.2}), which omits the overhead of locking and I/O operations. This lets us analyze the performance of the B$^\varepsilon$-Tree with multiple threads more precisely. 
+
+Figure \ref{fig:benchmark_1} shows the results for two workloads of 200M (million) inserts and 200M reads. We fixed the number of threads on 1 and 16, respectively, and evaluated both the Zipfian and the uniform distribution for our workloads. The workloads were run on a preloaded B$^\varepsilon$-Tree (200M inserts with the same respective distribution). Note that we cut off the diagrams at $\varepsilon=0.3$. Since the fanout grows exponentially with $\varepsilon$, the B$^\varepsilon$-Tree effectively uses the same layout for $\varepsilon \in [0; 0.36]$.\newline
+Metadata like page allocations, the final tree height as well as the number of pivot and buffer slots can be seen in figure \ref{fig:benchmark_2}. 
+
+\begin{figure}[h]
+	\scalebox{0.9}{
+		\begin{tikzpicture}
+			\begin{groupplot}[
+				group style={group size=2 by 1}
+				]
+				
+				\nextgroupplot[
+				title=200M Inserts,
+				width=\axisdefaultwidth,
+				height= \verticalplotscale*\axisdefaultheight,
+				xlabel=$\varepsilon$,
+				ylabel={Throughput [ops/s]},
+				xmin=30, xmax=100,
+				ymin=0, ymax=10000000,
+				xtick={5, 15, 25, 35, 45, 55, 65, 75, 85, 95},
+				xticklabel={\pgfmathparse{\tick/100}\pgfmathprintnumber[precision=2]\pgfmathresult},
+				xticklabel style={/pgf/number format/fixed},
+				legend to name=main_legend,
+				legend style={legend columns=2, /tikz/every even column/.append style={column sep=0.25cm}}
+				]
+				\coordinate (c1) at (rel axis cs:0,1);
+				\addplot +[color=blue, raw gnuplot, mark=x] gnuplot {
+					plot 'data/benchmark/1/zipfian/inserts/16.dat' with points;
+				};
+				\addplot +[color=cyan, raw gnuplot, mark=x] gnuplot {
+					plot 'data/benchmark/1/zipfian/inserts/1.dat' with points;
+				};
+				\addplot +[color=teal, raw gnuplot, mark=x] gnuplot {
+					plot 'data/benchmark/1/uniform/inserts/16.dat' with points;
+				};
+				\addplot +[color=green, raw gnuplot, mark=x] gnuplot {
+					plot 'data/benchmark/1/uniform/inserts/1.dat' with points;
+				};
+				\draw [dashed, color=lightgray] (80, 0) -- (80, 10000000) node [left, midway] {$\varepsilon=0.8$};
+				\addlegendentry{t=16 (zipfian)};
+				\addlegendentry{t=1 (zipfian)};
+				\addlegendentry{t=16 (uniform)};
+				\addlegendentry{t=1 (uniform)};
+				
+				\nextgroupplot[
+				title=200M Reads,
+				width=\axisdefaultwidth,
+				height= \verticalplotscale*\axisdefaultheight,
+				xlabel=$\varepsilon$,
+				xmin=30, xmax=100,
+				ymin=0, ymax=10000000,
+				xtick={5, 15, 25, 35, 45, 55, 65, 75, 85, 95},
+				xticklabel={\pgfmathparse{\tick/100}\pgfmathprintnumber[precision=2]\pgfmathresult},
+				xticklabel style={/pgf/number format/fixed}
+				]
+				\coordinate (c2) at (rel axis cs:1,1);
+				\addplot +[color=blue, raw gnuplot, mark=x] gnuplot {
+					plot 'data/benchmark/1/zipfian/reads/16.dat' with points;
+				};
+				\addplot +[color=cyan, raw gnuplot, mark=x] gnuplot {
+					plot 'data/benchmark/1/zipfian/reads/1.dat' with points;
+				};
+				\addplot +[color=teal, raw gnuplot, mark=x] gnuplot {
+					plot 'data/benchmark/1/uniform/reads/16.dat' with points;
+				};
+				\addplot +[color=green, raw gnuplot, mark=x] gnuplot {
+					plot 'data/benchmark/1/uniform/reads/1.dat' with points;
+				};
+				\draw [dashed, color=lightgray] (80, 0) -- (80, 10000000) node [left, midway] {$\varepsilon=0.8$};
+				
+			\end{groupplot}
+			
+			\coordinate (c3) at ($(c1)!.5!(c2)$);
+			\node[below, xshift=-7mm] at (c3 |- current bounding box.south){
+				\pgfplotslegendfromname{main_legend}
+			};
+			
+		\end{tikzpicture}
+	}
+	\caption{200M Operations on 200M Preloaded Values}
+	\label{fig:benchmark_1}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\scalebox{0.9}{
+\begin{tikzpicture}
+\begin{groupplot}[
+	group style={group size=2 by 2}
+]
+
+\nextgroupplot[
+	title={Page Allocations (t=16)},
+	width=\axisdefaultwidth,
+	height= \verticalplotscale*\axisdefaultheight,
+	xlabel=$\varepsilon$,
+	ylabel={Allocated Pages},
+	xmin=30, xmax=100,
+	ymin=0, ymax=10000000,
+	xtick={5, 15, 25, 35, 45, 55, 65, 75, 85, 95},
+	xticklabel={\pgfmathparse{\tick/100}\pgfmathprintnumber[precision=2]\pgfmathresult},
+	xticklabel style={/pgf/number format/fixed}
+]
+\addplot +[color=blue, raw gnuplot, mark=x] gnuplot {
+	plot 'data/benchmark/1/zipfian/pages/b_epsilon.dat' with points;
+};
+\addlegendentry{B$^\varepsilon$-Tree}
+\addplot +[color=red, dotted, very thick, raw gnuplot] gnuplot {
+	plot 'data/benchmark/1/zipfian/pages/b_plus.dat' with points;
+};
+\addlegendentry{B$^+$-Tree}
+\draw [dashed, color=lightgray] (80, 0) -- (80, 10000000) node [left, midway] {$\varepsilon=0.8$};
+
+\nextgroupplot[
+	title={Final Tree Height (t=16)},
+	width=\axisdefaultwidth,
+	height= \verticalplotscale*\axisdefaultheight,
+	ylabel shift=-3mm,
+	xlabel=$\varepsilon$,
+	ylabel={Tree Height},
+	xmin=30, xmax=100,
+	ymin=0, ymax=15,
+	ytick={4,5,6,7,8,9,13},
+	xtick={5, 15, 25, 35, 45, 55, 65, 75, 85, 95},
+	xticklabel={\pgfmathparse{\tick/100}\pgfmathprintnumber[precision=2]\pgfmathresult},
+	xticklabel style={/pgf/number format/fixed}
+]
+\addplot +[const plot mark mid, color=blue, raw gnuplot, mark=x] gnuplot {
+	plot 'data/benchmark/1/zipfian/height.dat' with points;
+};
+\addlegendentry{B$^\varepsilon$-Tree}
+\addplot +[color=red, dotted, very thick, raw gnuplot] gnuplot {
+	plot 'data/benchmark/1/zipfian/height_b_plus.dat' with points;
+};
+\addlegendentry{B$^+$-Tree}
+\draw [dashed, color=lightgray] (80, 0) -- (80, 15) node [left, midway] {$\varepsilon=0.8$};
+
+\nextgroupplot[
+	title={Number of Pivot and Buffer Slots},
+	width=\axisdefaultwidth,
+	height= \verticalplotscale*\axisdefaultheight,
+	xlabel=$\varepsilon$,
+	ylabel={Slots},
+	xmin=0, xmax=100,
+	ymin=0, ymax=400,
+	xtick={10, 30, 50, 70, 90},
+	xticklabel={\pgfmathparse{\tick/100}\pgfmathprintnumber[precision=2]\pgfmathresult},
+	xticklabel style={/pgf/number format/fixed},
+	legend pos=north west,
+	at = { ($ ( $ (group c1r1.south west) + (0,-100pt)$ )!0.5!(group c2r1.south east) $ ) }
+]
+\addplot +[color=darkgray, raw gnuplot, mark=x] gnuplot {
+	plot 'data/benchmark/1/pivots.dat' with points;
+};
+\addlegendentry{Pivot Slots {\footnotesize (1013 at $\varepsilon=1$)}}
+\addplot +[color=teal, raw gnuplot, mark=x] gnuplot {
+	plot 'data/benchmark/1/buffer.dat' with points;
+};
+\addlegendentry{Buffer Slots}
+\draw [dashed, color=lightgray] (80, 0) -- (80, 1100) node [left, midway, yshift=-4.25cm] {$\varepsilon=0.8$};
+
+\end{groupplot}
+\end{tikzpicture}
+}
+\caption{200M Operations on 200M Preloaded Values: Metadata}
+\label{fig:benchmark_2}
+\end{figure}
+
+When comparing the results for the first workload, we can see that the trends of the singlethreaded and the multithreaded runs are headed in the same direction. While the number of buffer slots stays roughly the same until $\varepsilon \approx 0.75$, the fanout increases noticeably already at $\varepsilon \approx 0.45$. Consequently, until $\varepsilon \approx 0.75$, the throughput of both runs slightly increases, although especially the multithreaded runs overall perform similarly. After $\varepsilon \approx 0.8$, the buffer slots shrink heavily in number, and both throughputs start to decline. The performance of the multithreaded runs drops by $\approx 53\%$ after $\varepsilon \approx 0.9$ but slightly recovers at $\varepsilon \approx 0.99$ due to the fact that the multiple worker threads benefit from a higher fanout. The singlethreaded variant declines until $\varepsilon \approx 0.98$ and then drops by $\approx 36\%$. The negative theoretical impact of larger values for $\varepsilon$ on throughput becomes apparent for $\varepsilon \in [0.8; 1]$ with the exception of $\varepsilon \geq 0.99$ for the multithreaded runs. Because the number of buffer slots effectively does not change for small values of $\varepsilon$, the throughput is consistent and even slightly increases in that range as the fanout grows and the tree height declines.
+
+With the shrinking height and the growing fanout of the B$^\varepsilon$-Tree, the throughput of the read-only workload run with one thread steadily increases from $\approx 500000$ ops/s to $\approx 1100000$ ops/s throughout all values for $\varepsilon$. The multi-threaded runs especially benefit from this after $\varepsilon \approx 0.35$ when the final tree height drops from 13 to 9, which means that each worker thread now has to access $\approx \frac{2}{3}$ of the previous number of pages for its operations. After increasing from $\approx 5250000$ ops/s to $\approx 7300000$ ops/s at $\varepsilon=0.95$, the throughput slightly declines. With the heavily declining number of buffer slots and the fact that the final tree height of 4 effectively does not change after $\varepsilon=0.7$, fewer worker threads encounter cached inserts on higher levels and thus are unable to finish the query early.
+
+Accessing a subset of values multiple times allows the B$^\varepsilon$-Tree to cache them in the buffers of the inner nodes. As described in sections \ref{5.2.1} and \ref{5.2.4}, insert and read operations consequently can be performed faster on this subset. Thus, in both cases, the workloads with the Zipfian distribution can always be processed as fast or even slightly faster than the uniform distribution. Especially the second workload benefits from the Zipfian distribution as the multithreaded runs show. Up until $\varepsilon \approx 0.85$, the Zipfian distribution increases the throughput by $\approx$ 400000 to 500000 ops/s. The decline after $\varepsilon=0.95$ confirms that the Zipfian distribution causes a flatter performance decrease than with the uniform distribution since it encounters buffered inserts more often.
+
+Caching inserts also impacts the density of our B$^\varepsilon$-Tree. Figure \ref{fig:benchmark_2} shows the total number of page allocations for the first workload with the Zipfian distribution, the difference to the uniform distribution was negligible in this case. When we compare the two ranges $\varepsilon < 0.9$ and $\varepsilon \ge 0.9$, we can see that the second produces $\approx 40\%$ denser trees. At $\varepsilon=0.95$, it even has $\approx 15\%$ fewer page allocations than a comparable B$^+$-Tree due to operations that encounter cached inserts and thus can be merged early. At $\varepsilon=1$, the B$^\varepsilon$-Tree allocates the same number of pages as the B$^+$-Tree when the fanout is effectively identical, and no inserts are buffered. While the first range allocates $\approx 4600000$ pages at both $\varepsilon=0$ and $\varepsilon=0.9$, this number drops to $\approx 3300000$ in-between at $\varepsilon=0.65$.
+
+Because of the resulting smaller fanout, smaller values for $\varepsilon$ generally cause more page allocations, which is amplified by the use of preemptive splitting. The increase in allocations for $\varepsilon \in [0.65; 0.9]$ is again due to the asymmetry in the number of pivot slots and buffer slots. After $\varepsilon=0.7$, the tree height does not change anymore, making the decline in the number of buffered inserts cause more flushes and thus preemptive splits. Once the number of pivots per node surpasses the number of buffer slots after $\varepsilon=0.9$, the B$^\varepsilon$-Tree quickly approaches the fanout of that of the B$^+$-Tree. Amplified by the size difference between a child-pointer pair and an upsert, the fanout decreases the number of preemptive splits, resulting in fewer page allocations.
+
+For the following tests, we set $\varepsilon$ to 0.8 as this value yielded the highest throughput result for the insert-only workload. The value $\varepsilon=0.8$ consequently seems to mark the boundary after which the insert-only performance starts to decline. Although the results were similar for $\varepsilon \in [0.4; 0.8]$ in both the singlethreaded and the multithreaded runs, the second workload showed that a higher fanout and thus smaller tree heights benefit read operations.
+
+It should be noted that the behavior of our B$^\varepsilon$-Tree heavily depends on the size of the value type. Therefore, workloads with different parameters may produce substantially deviating results for both the performance and the throughputs.
+
+\section{B$^+$-Tree Comparison}\label{6.3}
+
+For comparing our B$^\varepsilon$-Tree and the reference B$^+$-Tree implementation, we again use the "optimal" page buffer, i.e., we operate fully in memory. In addition, we evaluate a variant of our B$^\varepsilon$-Tree without a separate root node, which resembles the textbook design, to test whether our variant increases the performance with multiple threads. Figure \ref{fig:b_plus_tree_vs_b_epsilon_tree} shows the achieved throughputs for the following five workloads:
+
+\begin{enumerate}
+\item 200M inserts (write-only)
+\item 200M inserts (after a prerun of 200M inserts) (write-only)
+\item 200M reads (after a prerun of 200M inserts)  (read-only)
+\item 190M reads + 10M inserts (after a prerun of 200M inserts) (mixed)
+\item 100M reads + 100M updates (after a prerun of 200M inserts) (mixed)
+\end{enumerate}
+
+In contrast to the B$^+$-Tree, the average writer thread in a B$^\varepsilon$-Tree only has to access two nodes (or one if no separate root is used) and perform one sorted insert. Therefore, with one thread, both variants of the B$^\varepsilon$-Tree process the first workload $\approx 25\%$ faster than the B$^+$-Tree. However, if we process the same workload on pre-populated trees, the B$^\varepsilon$-Tree without a separate root node slightly decreases in performance compared to our variant. The separate root produces multiple B$^\varepsilon$-Subtrees that are organized in a node with the same fanout of that of our B$^+$-Tree. Populating this variant results in fewer expensive flushes at the cost of only one additional node traversal.
+
+With multiple threads, inserting can always be performed orders of magnitude faster when using a separate root node. Splitting the B$^\varepsilon$-Tree into multiple subtrees enables the worker threads to access their respective buffers concurrently. However, using a buffer in the root node causes expensive thread contention. Consequently, with 20 threads, we can perform inserts up to 10 times faster on empty trees and up to 11.5 times faster on pre-populated trees. The B$^+$-Tree struggles to scale after six threads using the first workload due to the initial small tree height as well as the asymmetry in the number of slots in the leaf and inner nodes.\newline
+With 20 threads, building up the tree can still be performed $\approx 3.6$ times faster compared to the B$^\varepsilon$-Tree without a separate root. The throughput achieved on the second workload with 20 threads ($\approx 9.4$ times faster) further shows that inserts do not scale on lock-based textbook B$^\varepsilon$-Trees. However, our variant increases throughput with multiple threads, processing the first two workloads 2.8 and 1.2 times faster than the B$^+$-Tree.
+
+Reads, on the other hand, cannot be performed as fast compared to the B$^+$-Tree because of their height difference. While all three trees scale until $\approx 15$ threads and then stagnate, the B$^+$-Tree performs the third workload with up to $\approx 1300000$ more operations per second than our variant of the B$^\varepsilon$-Tree. Up until 4 threads, both B$^\varepsilon$-Tree variants behave similarly. However, after that, our variant scales better, with up to $\approx 1070000$ more operations per second.
+
+The mixed workloads again show the importance of adapting the textbook design of a B$^\varepsilon$-Tree for multithreading. While our variant scales when processing the fourth and fifth workload, the B$^\varepsilon$-Tree without a separate root struggles after a few threads and steadily holds a throughput of $\approx 25\%$ and $\approx 8\%$ of that of our variant, respectively. The B$^+$-Tree, however, beats both as it achieves up to $\approx 1760000$ more operations per second in the fourth workload. Regarding the fifth workload, the B$^+$-Tree even doubles the throughput of our B$^\varepsilon$-Tree variant throughout nearly the entire thread range.\newline
+While the average B$^+$-Tree operation can use shared lock coupling to travel to the respective leaf node, every writer thread operating on a B$^\varepsilon$-Tree has to lock its visited nodes exclusively (apart from the root node). Due to the nature of the \texttt{std::shared\_mutex} that protects each node, this results in conflicts between reader and writer threads and thus causes thread contentions. Because workload \#5 has a more balanced number of reads and writes, our B$^\varepsilon$-Tree consequently scales slower compared to workload \#4.
+
+Furthermore, workload \#5 eventually causes the upsert buffers in the higher levels to only contain updates. This prevents more reader threads from returning early upon encountering a cached insert, which the Zipfian distribution benefits from. Thus, even with one thread, the performance of our B$^\varepsilon$-Tree variant drops by $\approx 45\%$ compared to workload \#4.
+
+\begin{figure}
+\centering
+\scalebox{0.9}{
+\begin{tikzpicture}
+	\begin{groupplot}[
+		group style={group size=2 by 3, vertical sep=2.1cm}
+		]
+		
+		\nextgroupplot[
+		title={200M Inserts w/o Preloads},
+		width=\axisdefaultwidth,
+		height= \verticalplotscale*\axisdefaultheight,
+		xlabel={Threads},
+		ylabel={Throughput [ops/s]},
+		xmin=0, xmax=21,
+		ymin=0, ymax=10000000,
+		xtick={2, 4, 6, 8, 10, 12, 14, 16, 18, 20},
+		legend to name=main_legend,
+		legend entries={
+			B$^\varepsilon$-Tree,
+			B$^+$-Tree,
+			B$^\varepsilon$-Tree (w/o separate root)
+		},
+		legend style={legend columns=3, /tikz/every even column/.append style={column sep=0.25cm}}
+		]
+		\addlegendimage{blue, mark=x}
+		\addlegendimage{red, mark=x}
+		\addlegendimage{cyan, mark=x}
+		\addplot +[color=blue, raw gnuplot, no marks] gnuplot {
+			plot 'data/benchmark/2/epsilon_80/inserts/b_epsilon.dat' smooth sbezier;
+		};
+		\addplot +[color=blue, raw gnuplot, only marks, mark=x] gnuplot {
+			plot 'data/benchmark/2/epsilon_80/inserts/b_epsilon.dat' with points;
+		};
+		\addplot +[color=cyan, raw gnuplot, no marks] gnuplot {
+			plot 'data/benchmark/2/epsilon_80/inserts/b_epsilon_root.dat' smooth sbezier;
+		};
+		\addplot +[color=cyan, raw gnuplot, only marks, mark=x] gnuplot {
+			plot 'data/benchmark/2/epsilon_80/inserts/b_epsilon_root.dat' with points;
+		};
+		\addplot +[color=red, raw gnuplot, no marks] gnuplot {
+			plot 'data/benchmark/2/epsilon_80/inserts/b_plus.dat' smooth sbezier;
+		};
+		\addplot +[color=red, raw gnuplot, only marks, mark=x] gnuplot {
+			plot 'data/benchmark/2/epsilon_80/inserts/b_plus.dat' with points;
+		};
+		
+		\nextgroupplot[
+		title={200M Inserts},
+		width=\axisdefaultwidth,
+		height= \verticalplotscale*\axisdefaultheight,
+		xlabel={Threads},
+		xmin=0, xmax=21,
+		ymin=0, ymax=10000000,
+		xtick={2, 4, 6, 8, 10, 12, 14, 16, 18, 20}
+		]
+		\addplot +[color=blue, raw gnuplot, no marks] gnuplot {
+			plot 'data/benchmark/2/epsilon_80/inserts_preloaded/b_epsilon.dat' smooth sbezier;
+		};
+		\addplot +[color=blue, raw gnuplot, only marks, mark=x] gnuplot {
+			plot 'data/benchmark/2/epsilon_80/inserts_preloaded/b_epsilon.dat' with points;
+		};
+		\addplot +[color=cyan, raw gnuplot, no marks] gnuplot {
+			plot 'data/benchmark/2/epsilon_80/inserts_preloaded/b_epsilon_root.dat' smooth sbezier;
+		};
+		\addplot +[color=cyan, raw gnuplot, only marks, mark=x] gnuplot {
+			plot 'data/benchmark/2/epsilon_80/inserts_preloaded/b_epsilon_root.dat' with points;
+		};
+		\addplot +[color=red, raw gnuplot, no marks] gnuplot {
+			plot 'data/benchmark/2/epsilon_80/inserts_preloaded/b_plus.dat' smooth sbezier;
+		};
+		\addplot +[color=red, raw gnuplot, only marks, mark=x] gnuplot {
+			plot 'data/benchmark/2/epsilon_80/inserts_preloaded/b_plus.dat' with points;
+		};
+		
+		\nextgroupplot[
+		title={200M Reads},
+		width=\axisdefaultwidth,
+		height= \verticalplotscale*\axisdefaultheight,
+		xlabel={Threads},
+		ylabel={Throughput [ops/s]},
+		xmin=0, xmax=21,
+		ymin=0, ymax=10000000,
+		xtick={2, 4, 6, 8, 10, 12, 14, 16, 18, 20}
+		]
+		\addplot +[color=blue, raw gnuplot, no marks] gnuplot {
+			plot 'data/benchmark/2/epsilon_80/reads/b_epsilon.dat' smooth sbezier;
+		};
+		\addplot +[color=blue, raw gnuplot, only marks, mark=x] gnuplot {
+			plot 'data/benchmark/2/epsilon_80/reads/b_epsilon.dat' with points;
+		};
+		\addplot +[color=cyan, raw gnuplot, no marks] gnuplot {
+			plot 'data/benchmark/2/epsilon_80/reads/b_epsilon_root.dat' smooth sbezier;
+		};
+		\addplot +[color=cyan, raw gnuplot, only marks, mark=x] gnuplot {
+			plot 'data/benchmark/2/epsilon_80/reads/b_epsilon_root.dat' with points;
+		};
+		\addplot +[color=red, raw gnuplot, no marks] gnuplot {
+			plot 'data/benchmark/2/epsilon_80/reads/b_plus.dat' smooth sbezier;
+		};
+		\addplot +[color=red, raw gnuplot, only marks, mark=x] gnuplot {
+			plot 'data/benchmark/2/epsilon_80/reads/b_plus.dat' with points;
+		};
+		
+		\nextgroupplot[
+		title={190M Reads, 10M Inserts},
+		width=\axisdefaultwidth,
+		height= \verticalplotscale*\axisdefaultheight,
+		xlabel={Threads},
+		xmin=0, xmax=21,
+		ymin=0, ymax=10000000,
+		xtick={2, 4, 6, 8, 10, 12, 14, 16, 18, 20}
+		]
+		\addplot +[color=blue, raw gnuplot, no marks] gnuplot {
+			plot 'data/benchmark/2/epsilon_80/95_5/b_epsilon.dat' smooth sbezier;
+		};
+		\addplot +[color=blue, raw gnuplot, only marks, mark=x] gnuplot {
+			plot 'data/benchmark/2/epsilon_80/95_5/b_epsilon.dat' with points;
+		};
+		\addplot +[color=cyan, raw gnuplot, no marks] gnuplot {
+			plot 'data/benchmark/2/epsilon_80/95_5/b_epsilon_root.dat' smooth sbezier;
+		};
+		\addplot +[color=cyan, raw gnuplot, only marks, mark=x] gnuplot {
+			plot 'data/benchmark/2/epsilon_80/95_5/b_epsilon_root.dat' with points;
+		};
+		\addplot +[color=red, raw gnuplot, no marks] gnuplot {
+			plot 'data/benchmark/2/epsilon_80/95_5/b_plus.dat' smooth sbezier;
+		};
+		\addplot +[color=red, raw gnuplot, only marks, mark=x] gnuplot {
+			plot 'data/benchmark/2/epsilon_80/95_5/b_plus.dat' with points;
+		};
+		
+		\nextgroupplot[
+		title={100M Reads, 100M Updates},
+		width=\axisdefaultwidth,
+		height= \verticalplotscale*\axisdefaultheight,
+		xlabel={Threads},
+		ylabel={Throughput [ops/s]},
+		xmin=0, xmax=21,
+		ymin=0, ymax=10000000,
+		xtick={2, 4, 6, 8, 10, 12, 14, 16, 18, 20},
+		at = { ($ ( $ (group c1r2.south west) + (0,-100pt)$ )!0.5!(group c2r2.south east) $ ) },
+		yshift=-3mm
+		]
+		\addplot +[color=blue, raw gnuplot, no marks] gnuplot {
+			plot 'data/benchmark/2/epsilon_80/50_50/b_epsilon.dat' smooth sbezier;
+		};
+		\addplot +[color=blue, raw gnuplot, only marks, mark=x] gnuplot {
+			plot 'data/benchmark/2/epsilon_80/50_50/b_epsilon.dat' with points;
+		};
+		\addplot +[color=cyan, raw gnuplot, no marks] gnuplot {
+			plot 'data/benchmark/2/epsilon_80/50_50/b_epsilon_root.dat' smooth sbezier;
+		};
+		\addplot +[color=cyan, raw gnuplot, only marks, mark=x] gnuplot {
+			plot 'data/benchmark/2/epsilon_80/50_50/b_epsilon_root.dat' with points;
+		};
+		\addplot +[color=red, raw gnuplot, no marks] gnuplot {
+			plot 'data/benchmark/2/epsilon_80/50_50/b_plus.dat' smooth sbezier;
+		};
+		\addplot +[color=red, raw gnuplot, only marks, mark=x] gnuplot {
+			plot 'data/benchmark/2/epsilon_80/50_50/b_plus.dat' with points;
+		};
+		
+	\end{groupplot}
+	
+	\coordinate (c3) at ($(group c1r3.south)$);
+	\node[below, xshift=-7mm, yshift=-1mm] at (c3 |- current bounding box.south){
+		\pgfplotslegendfromname{main_legend}
+	};
+	
+\end{tikzpicture}
+}
+\caption{200M Operations: B$^\varepsilon$-Tree ($\varepsilon=0.8$) / B$^+$-Tree}
+\label{fig:b_plus_tree_vs_b_epsilon_tree}
+\end{figure}
+
+\section{Key-Value Store Comparison}\label{6.4}
+
+For the final evaluation, we compare our B$^\varepsilon$-Tree and B$^+$-Tree to Googles's LevelDB \cite{leveldb} and Facebook's RocksDB \cite{rocksdb}, a fork of LevelDB, which both make use of a LSM-Tree. We make our 2Q buffer and the two LSM-Trees process the first four workloads (see section \ref{6.3}) once with 40GB of memory for the data to fully fit into the RAM (see figure \ref{fig:in_memory}), and once with 10GB of memory.
+
+Since the default UCSB configurations limit the available memory to 5\% or 10\% of the workloads, we adapt the default database configurations of the 1TB workloads for LevelDB and RocksDB. The changes can be seen in table \ref{tab:leveldb_rocksdb_settings}. While LevelDB only keeps up to two memtables in memory \cite{leveldb}, RocksDB can be adjusted to use more \cite{rocksdb}, which increases performance, especially during the multithreaded runs. We found \texttt{max\_write\_buffer\_number=32} to be a good value. For the insert-only workloads \#1 and \#2, we let LevelDB and RocksDB use the given memory exclusively for the memtables. Since workload \#3 and \#4 additionally make use of read operations, we used 50\% of the memory for the block cache there.\newline
+Additionally, we used a bloom filter of 10 bits for both LSM-Trees. These settings made RocksDB use approximately as much physical memory as our 2Q buffer did. It should be noted, that LevelDB indeed did the same, but only regarding virtual memory. LevelDB generally seemed to prefer early disk writes to free its memtables quickly. Thus, we observed an average physical memory usage of only $\approx 30\%$ of the given boundaries.
+
+\begin{table}[h]
+	\centering
+	\caption[Adjustments of the Default UCSB Configs (1TB) for LevelDB and RocksDB]{Adjustments of the Default UCSB Configs (1TB) for LevelDB and RocksDB ($\texttt{\textcolor{blue}{M}} \in \{\texttt{40GB}, \texttt{10GB}\}$)}
+	\label{tab:leveldb_rocksdb_settings}
+	\vspace*{5mm}
+	\begin{tabular}{@{}lll@{}}
+		\toprule \addlinespace[1mm]
+		& LevelDB                                                                                                                                                                                                                                                                                                         & RocksDB                                                                                                                                                                                                                                                                                                                                                                                                      \\ \midrule \addlinespace[1mm]
+		Workloads \#1, \#2 & \texttt{write\_buffer\_size=\textcolor{blue}{M}}                                                                                                                                                                                                                            & \makecell[l]{\texttt{write\_buffer\_size=\textcolor{blue}{M}/32}\\ \texttt{max\_write\_buffer\_number=32}}                                                                                                                                                                                             \\ \addlinespace[1mm]
+		Workloads \#3, \#4 & \makecell[l]{\texttt{write\_buffer\_size=\textcolor{blue}{M}/2}\\ \texttt{block\_cache=\textcolor{blue}{M}/2}\\ \texttt{filter\_bits=10}} & \makecell[l]{\texttt{max\_write\_buffer\_number=32}\\ \texttt{write\_buffer\_size=\textcolor{blue}{M}/64}\\ \texttt{block\_cache=\textcolor{blue}{M}/2}\\ \texttt{(+ filter of 10 bits)}} \\ \addlinespace[1mm] \bottomrule
+	\end{tabular}
+\end{table}
+
+Figures \ref{fig:in_memory} and \ref{fig:10gb} show the corresponding results, which follow a similar direction regardless of the respective workload. LevelDB is generally on the slow end, independent of the number of threads. Regarding RocksDB, because the data in memory is divided on 16 times the number of memtables compared to LevelDB, the average worker thread encounters fewer write stalls, which occur when all memtables are full \cite{write_stalls}. Therefore, RocksDB always achieves the highest throughput for $\geq 3$ threads and generally scales with multiple threads.\newline
+However, this cannot be said about the performance of the B$^\varepsilon$-Tree and the B$^+$-Tree, which drops the more threads are in use. As described in section \ref{5.1.2}, our 2Q buffer uses a lock-protected hashtable that maps the page IDs to the respective location in memory. Although we handle the I/O operations of page evictions and loads outside of the scope of that lock, the logic of the 2Q strategy still relies on being protected by said \texttt{std::shared\_mutex}. Consequently, most of the time, the average B$^\varepsilon$-Tree and B$^+$-Tree worker thread operates on the page buffer rather than on its respective nodes during its operations. The resulting thread contentions cause the throughput to drop.
+
+Nonetheless, both the B$^\varepsilon$-Tree and the B$^+$-Tree manage to beat both LevelDB and RocksDB when staying in memory with one thread. With a memory limit of 10GB, the B$^\varepsilon$-Tree is the only one, achieving $\approx 180\%$ and $\approx 140\%$ of RockDB's throughput for workload \#1 and \#2, respectively. Especially the result of the second workload, which is processed on a prefilled tree, again shows the efficiency of the B$^\varepsilon$-Tree, regarding I/O operations, compared to the B$^+$-Tree. Each upsert flush divides the cost of accessing the target node on a lower level by the number of flushed upserts and, therefore, operations. Thus, the average writer thread has to access fewer nodes than the B$^+$-Tree worker threads. This explains the performance gain of $\approx 2.5\times$ when staying in memory and $\approx 7.2\times$ with a memory limit of 10GB.
+
+Reads, on the other hand, require the B$^\varepsilon$-Tree to access more nodes compared to the B$^+$-Tree due to the larger tree height, which results in more I/O operations. Therefore, the B$^\varepsilon$-Tree performs workloads \#3 and \#4 consistently slower, although the difference is orders of magnitude smaller compared to the performance gain in workloads \#1 and \#2.
+
+\newcommand{\thirdplotmode}{smooth unique}
+
+\begin{figure}[h]
+\scalebox{0.9}{
+\begin{tikzpicture}
+\begin{groupplot}[
+	group style={group size=2 by 2, vertical sep=2.1cm}
+]
+
+\nextgroupplot[
+	title={200M Inserts w/o Preloads},
+	width=\axisdefaultwidth,
+	height= \verticalplotscale*\axisdefaultheight,
+	xlabel={Threads},
+	ylabel={Throughput [ops/s]},
+	xmin=0, xmax=21,
+	ymin=0, ymax=2000000,
+	xtick={2, 4, 6, 8, 10, 12, 14, 16, 18, 20},
+	legend to name=main_legend,
+	legend style={legend columns=4, /tikz/every even column/.append style={column sep=0.25cm}},
+	legend entries={
+		B$^\varepsilon$-Tree,
+		B$^+$-Tree,
+		RocksDB,
+		LevelDB
+	}
+]
+\addlegendimage{blue, mark=x}
+\addlegendimage{red, mark=x}
+\addlegendimage{violet, mark=x}
+\addlegendimage{orange, mark=x}
+\coordinate (c1) at (rel axis cs:0,1);
+\addplot +[color=blue, raw gnuplot, no marks] gnuplot {
+	plot 'data/benchmark/3/in_memory/inserts/b_epsilon.dat' \thirdplotmode;
+};
+\addplot +[color=blue, raw gnuplot, only marks, mark=x] gnuplot {
+	plot 'data/benchmark/3/in_memory/inserts/b_epsilon.dat' with points;
+};
+\addplot +[color=red, raw gnuplot, no marks] gnuplot {
+	plot 'data/benchmark/3/in_memory/inserts/b_plus.dat' \thirdplotmode;
+};
+\addplot +[color=red, raw gnuplot, only marks, mark=x] gnuplot {
+	plot 'data/benchmark/3/in_memory/inserts/b_plus.dat' with points;
+};
+\addplot +[color=orange, raw gnuplot, no marks] gnuplot {
+	plot 'data/benchmark/3/in_memory/inserts/leveldb.dat' \thirdplotmode;
+};
+\addplot +[color=orange, raw gnuplot, only marks, mark=x] gnuplot {
+	plot 'data/benchmark/3/in_memory/inserts/leveldb.dat' with points;
+};
+\addplot +[color=violet, raw gnuplot, no marks] gnuplot {
+	plot 'data/benchmark/3/in_memory/inserts/rocksdb.dat' \thirdplotmode;
+};
+\addplot +[color=violet, raw gnuplot, only marks, mark=x] gnuplot {
+	plot 'data/benchmark/3/in_memory/inserts/rocksdb.dat' with points;
+};
+
+\nextgroupplot[
+	title={200M Inserts},
+	width=\axisdefaultwidth,
+	height= \verticalplotscale*\axisdefaultheight,
+	xlabel={Threads},
+	xmin=0, xmax=21,
+	ymin=0, ymax=2000000,
+	xtick={2, 4, 6, 8, 10, 12, 14, 16, 18, 20}
+]
+\addplot +[color=blue, raw gnuplot, no marks] gnuplot {
+	plot 'data/benchmark/3/in_memory/inserts_preloaded/b_epsilon.dat' \thirdplotmode;
+};
+\addplot +[color=blue, raw gnuplot, only marks, mark=x] gnuplot {
+	plot 'data/benchmark/3/in_memory/inserts_preloaded/b_epsilon.dat' with points;
+};
+\addplot +[color=red, raw gnuplot, no marks] gnuplot {
+	plot 'data/benchmark/3/in_memory/inserts_preloaded/b_plus.dat' \thirdplotmode;
+};
+\addplot +[color=red, raw gnuplot, only marks, mark=x] gnuplot {
+	plot 'data/benchmark/3/in_memory/inserts_preloaded/b_plus.dat' with points;
+};
+\addplot +[color=orange, raw gnuplot, no marks] gnuplot {
+	plot 'data/benchmark/3/in_memory/inserts_preloaded/leveldb.dat' \thirdplotmode;
+};
+\addplot +[color=orange, raw gnuplot, only marks, mark=x] gnuplot {
+	plot 'data/benchmark/3/in_memory/inserts_preloaded/leveldb.dat' with points;
+};
+\addplot +[color=violet, raw gnuplot, no marks] gnuplot {
+	plot 'data/benchmark/3/in_memory/inserts_preloaded/rocksdb.dat' \thirdplotmode;
+};
+\addplot +[color=violet, raw gnuplot, only marks, mark=x] gnuplot {
+	plot 'data/benchmark/3/in_memory/inserts_preloaded/rocksdb.dat' with points;
+};
+
+\nextgroupplot[
+	title={200M Reads},
+	width=\axisdefaultwidth,
+	height= \verticalplotscale*\axisdefaultheight,
+	xlabel={Threads},
+	ylabel={Throughput [ops/s]},
+	xmin=0, xmax=21,
+	ymin=0, ymax=2000000,
+	xtick={2, 4, 6, 8, 10, 12, 14, 16, 18, 20}
+]
+\addplot +[color=blue, raw gnuplot, no marks] gnuplot {
+	plot 'data/benchmark/3/in_memory/reads/b_epsilon.dat' \thirdplotmode;
+};
+\addplot +[color=blue, raw gnuplot, only marks, mark=x] gnuplot {
+	plot 'data/benchmark/3/in_memory/reads/b_epsilon.dat' with points;
+};
+\addplot +[color=red, raw gnuplot, no marks] gnuplot {
+	plot 'data/benchmark/3/in_memory/reads/b_plus.dat' \thirdplotmode;
+};
+\addplot +[color=red, raw gnuplot, only marks, mark=x] gnuplot {
+	plot 'data/benchmark/3/in_memory/reads/b_plus.dat' with points;
+};
+\addplot +[color=orange, raw gnuplot, no marks] gnuplot {
+	plot 'data/benchmark/3/in_memory/reads/leveldb.dat' \thirdplotmode;
+};
+\addplot +[color=orange, raw gnuplot, only marks, mark=x] gnuplot {
+	plot 'data/benchmark/3/in_memory/reads/leveldb.dat' with points;
+};
+\addplot +[color=violet, raw gnuplot, no marks] gnuplot {
+	plot 'data/benchmark/3/in_memory/reads/rocksdb.dat' \thirdplotmode;
+};
+\addplot +[color=violet, raw gnuplot, only marks, mark=x] gnuplot {
+	plot 'data/benchmark/3/in_memory/reads/rocksdb.dat' with points;
+};
+
+\nextgroupplot[
+	title={190M Reads, 10M Inserts},
+	width=\axisdefaultwidth,
+	height= \verticalplotscale*\axisdefaultheight,
+	xlabel={Threads},
+	xmin=0, xmax=21,
+	ymin=0, ymax=2000000,
+	xtick={2, 4, 6, 8, 10, 12, 14, 16, 18, 20}
+]
+\coordinate (c2) at (rel axis cs:1,1);
+\addplot +[color=blue, raw gnuplot, no marks] gnuplot {
+	plot 'data/benchmark/3/in_memory/95_5/b_epsilon.dat' \thirdplotmode;
+};
+\addplot +[color=blue, raw gnuplot, only marks, mark=x] gnuplot {
+	plot 'data/benchmark/3/in_memory/95_5/b_epsilon.dat' with points;
+};
+\addplot +[color=red, raw gnuplot, no marks] gnuplot {
+	plot 'data/benchmark/3/in_memory/95_5/b_plus.dat' \thirdplotmode;
+};
+\addplot +[color=red, raw gnuplot, only marks, mark=x] gnuplot {
+	plot 'data/benchmark/3/in_memory/95_5/b_plus.dat' with points;
+};
+\addplot +[color=orange, raw gnuplot, no marks] gnuplot {
+	plot 'data/benchmark/3/in_memory/95_5/leveldb.dat' \thirdplotmode;
+};
+\addplot +[color=orange, raw gnuplot, only marks, mark=x] gnuplot {
+	plot 'data/benchmark/3/in_memory/95_5/leveldb.dat' with points;
+};
+\addplot +[color=violet, raw gnuplot, no marks] gnuplot {
+	plot 'data/benchmark/3/in_memory/95_5/rocksdb.dat' \thirdplotmode;
+};
+\addplot +[color=violet, raw gnuplot, only marks, mark=x] gnuplot {
+	plot 'data/benchmark/3/in_memory/95_5/rocksdb.dat' with points;
+};
+
+\end{groupplot}
+
+\coordinate (c3) at ($(c1)!.5!(c2)$);
+\node[below, xshift=-7mm, yshift=-1mm] at (c3 |- current bounding box.south){
+	\pgfplotslegendfromname{main_legend}
+};
+
+\end{tikzpicture}
+}
+\caption{200M Operations In-Memory: B$^\varepsilon$-Tree ($\varepsilon=0.8$, 2Q) / B$^+$-Tree (2Q) / RocksDB / LevelDB}
+\label{fig:in_memory}
+\end{figure}
+
+
+
+\begin{figure}[h]
+	\scalebox{0.9}{
+		\begin{tikzpicture}
+			\begin{groupplot}[
+				group style={group size=2 by 2, vertical sep=2.1cm}
+				]
+				
+				\nextgroupplot[
+				title={200M Inserts w/o Preloads},
+				width=\axisdefaultwidth,
+				height= \verticalplotscale*\axisdefaultheight,
+				xlabel={Threads},
+				ylabel={Throughput [ops/s]},
+				xmin=0, xmax=21,
+				ymin=0, ymax=2000000,
+				xtick={2, 4, 6, 8, 10, 12, 14, 16, 18, 20},
+				legend to name=main_legend,
+				legend style={legend columns=4, /tikz/every even column/.append style={column sep=0.25cm}},
+				legend entries={
+					B$^\varepsilon$-Tree,
+					B$^+$-Tree,
+					RocksDB,
+					LevelDB
+				}
+				]
+				\addlegendimage{blue, mark=x}
+				\addlegendimage{red, mark=x}
+				\addlegendimage{violet, mark=x}
+				\addlegendimage{orange, mark=x}
+				\coordinate (c1) at (rel axis cs:0,1);
+				\addplot +[color=blue, raw gnuplot, no marks] gnuplot {
+					plot 'data/benchmark/3/10gb/inserts/b_epsilon.dat' \thirdplotmode;
+				};
+				\addplot +[color=blue, raw gnuplot, only marks, mark=x] gnuplot {
+					plot 'data/benchmark/3/10gb/inserts/b_epsilon.dat' with points;
+				};
+				\addplot +[color=red, raw gnuplot, no marks] gnuplot {
+					plot 'data/benchmark/3/10gb/inserts/b_plus.dat' \thirdplotmode;
+				};
+				\addplot +[color=red, raw gnuplot, only marks, mark=x] gnuplot {
+					plot 'data/benchmark/3/10gb/inserts/b_plus.dat' with points;
+				};
+				\addplot +[color=orange, raw gnuplot, no marks] gnuplot {
+					plot 'data/benchmark/3/10gb/inserts/leveldb.dat' \thirdplotmode;
+				};
+				\addplot +[color=orange, raw gnuplot, only marks, mark=x] gnuplot {
+					plot 'data/benchmark/3/10gb/inserts/leveldb.dat' with points;
+				};
+				\addplot +[color=violet, raw gnuplot, no marks] gnuplot {
+					plot 'data/benchmark/3/10gb/inserts/rocksdb.dat' \thirdplotmode;
+				};
+				\addplot +[color=violet, raw gnuplot, only marks, mark=x] gnuplot {
+					plot 'data/benchmark/3/10gb/inserts/rocksdb.dat' with points;
+				};
+				
+				\nextgroupplot[
+				title={200M Inserts},
+				width=\axisdefaultwidth,
+				height= \verticalplotscale*\axisdefaultheight,
+				xlabel={Threads},
+				xmin=0, xmax=21,
+				ymin=0, ymax=2000000,
+				xtick={2, 4, 6, 8, 10, 12, 14, 16, 18, 20}
+				]
+				\addplot +[color=blue, raw gnuplot, no marks] gnuplot {
+					plot 'data/benchmark/3/10gb/inserts_preloaded/b_epsilon.dat' \thirdplotmode;
+				};
+				\addplot +[color=blue, raw gnuplot, only marks, mark=x] gnuplot {
+					plot 'data/benchmark/3/10gb/inserts_preloaded/b_epsilon.dat' with points;
+				};
+				\addplot +[color=red, raw gnuplot, no marks] gnuplot {
+					plot 'data/benchmark/3/10gb/inserts_preloaded/b_plus.dat' \thirdplotmode;
+				};
+				\addplot +[color=red, raw gnuplot, only marks, mark=x] gnuplot {
+					plot 'data/benchmark/3/10gb/inserts_preloaded/b_plus.dat' with points;
+				};
+				\addplot +[color=orange, raw gnuplot, no marks] gnuplot {
+					plot 'data/benchmark/3/10gb/inserts_preloaded/leveldb.dat' \thirdplotmode;
+				};
+				\addplot +[color=orange, raw gnuplot, only marks, mark=x] gnuplot {
+					plot 'data/benchmark/3/10gb/inserts_preloaded/leveldb.dat' with points;
+				};
+				\addplot +[color=violet, raw gnuplot, no marks] gnuplot {
+					plot 'data/benchmark/3/10gb/inserts_preloaded/rocksdb.dat' \thirdplotmode;
+				};
+				\addplot +[color=violet, raw gnuplot, only marks, mark=x] gnuplot {
+					plot 'data/benchmark/3/10gb/inserts_preloaded/rocksdb.dat' with points;
+				};
+				
+				\nextgroupplot[
+				title={200M Reads},
+				width=\axisdefaultwidth,
+				height= \verticalplotscale*\axisdefaultheight,
+				xlabel={Threads},
+				ylabel={Throughput [ops/s]},
+				xmin=0, xmax=21,
+				ymin=0, ymax=2000000,
+				xtick={2, 4, 6, 8, 10, 12, 14, 16, 18, 20}
+				]
+				\addplot +[color=blue, raw gnuplot, no marks] gnuplot {
+					plot 'data/benchmark/3/10gb/reads/b_epsilon.dat' \thirdplotmode;
+				};
+				\addplot +[color=blue, raw gnuplot, only marks, mark=x] gnuplot {
+					plot 'data/benchmark/3/10gb/reads/b_epsilon.dat' with points;
+				};
+				\addplot +[color=red, raw gnuplot, no marks] gnuplot {
+					plot 'data/benchmark/3/10gb/reads/b_plus.dat' \thirdplotmode;
+				};
+				\addplot +[color=red, raw gnuplot, only marks, mark=x] gnuplot {
+					plot 'data/benchmark/3/10gb/reads/b_plus.dat' with points;
+				};
+				\addplot +[color=orange, raw gnuplot, no marks] gnuplot {
+					plot 'data/benchmark/3/10gb/reads/leveldb.dat' \thirdplotmode;
+				};
+				\addplot +[color=orange, raw gnuplot, only marks, mark=x] gnuplot {
+					plot 'data/benchmark/3/10gb/reads/leveldb.dat' with points;
+				};
+				\addplot +[color=violet, raw gnuplot, no marks] gnuplot {
+					plot 'data/benchmark/3/10gb/reads/rocksdb.dat' \thirdplotmode;
+				};
+				\addplot +[color=violet, raw gnuplot, only marks, mark=x] gnuplot {
+					plot 'data/benchmark/3/10gb/reads/rocksdb.dat' with points;
+				};
+				
+				\nextgroupplot[
+				title={190M Reads, 10M Inserts},
+				width=\axisdefaultwidth,
+				height= \verticalplotscale*\axisdefaultheight,
+				xlabel={Threads},
+				xmin=0, xmax=21,
+				ymin=0, ymax=2000000,
+				xtick={2, 4, 6, 8, 10, 12, 14, 16, 18, 20}
+				]
+				\coordinate (c2) at (rel axis cs:1,1);
+				\addplot +[color=blue, raw gnuplot, no marks] gnuplot {
+					plot 'data/benchmark/3/10gb/95_5/b_epsilon.dat' \thirdplotmode;
+				};
+				\addplot +[color=blue, raw gnuplot, only marks, mark=x] gnuplot {
+					plot 'data/benchmark/3/10gb/95_5/b_epsilon.dat' with points;
+				};
+				\addplot +[color=red, raw gnuplot, no marks] gnuplot {
+					plot 'data/benchmark/3/10gb/95_5/b_plus.dat' \thirdplotmode;
+				};
+				\addplot +[color=red, raw gnuplot, only marks, mark=x] gnuplot {
+					plot 'data/benchmark/3/10gb/95_5/b_plus.dat' with points;
+				};
+				\addplot +[color=orange, raw gnuplot, no marks] gnuplot {
+					plot 'data/benchmark/3/10gb/95_5/leveldb.dat' \thirdplotmode;
+				};
+				\addplot +[color=orange, raw gnuplot, only marks, mark=x] gnuplot {
+					plot 'data/benchmark/3/10gb/95_5/leveldb.dat' with points;
+				};
+				\addplot +[color=violet, raw gnuplot, no marks] gnuplot {
+					plot 'data/benchmark/3/10gb/95_5/rocksdb.dat' \thirdplotmode;
+				};
+				\addplot +[color=violet, raw gnuplot, only marks, mark=x] gnuplot {
+					plot 'data/benchmark/3/10gb/95_5/rocksdb.dat' with points;
+				};
+				
+			\end{groupplot}
+			
+			\coordinate (c3) at ($(c1)!.5!(c2)$);
+			\node[below, xshift=-7mm, yshift=-1mm] at (c3 |- current bounding box.south){
+				\pgfplotslegendfromname{main_legend}
+			};
+			
+		\end{tikzpicture}
+	}
+	\caption{200M Operations with 10GB of Memory: B$^\varepsilon$-Tree ($\varepsilon=0.8$, 2Q) / B$^+$-Tree (2Q) / RocksDB / LevelDB}
+	\label{fig:10gb}
+\end{figure}

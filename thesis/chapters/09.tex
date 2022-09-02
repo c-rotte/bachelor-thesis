@@ -1,0 +1,15 @@
+% !TeX root = ../main.tex
+% Add the above to each chapter to make compiling the PDF easier in some editors.
+
+\chapter{Conclusion}\label{chapter:conclusion}
+
+In this thesis, we proposed a design for a B$^\varepsilon$-Tree on top of a 2Q page buffer. The B$^\varepsilon$-Tree offers concurrent access for both read and write operations. Since all write operations require exclusive access to the nodes, the tree makes use of a separate root node that is similar to the inner nodes of a B$^+$-Tree, splitting it into multiple subtrees. This enables the average worker threads to simultaneously access its respective node. 
+
+Flushes are performed with the main objective to release exclusive locks on higher node levels as early as possible. We therefore combined traversing the tree in level order with preemptive splitting of the nodes to enable exclusive lock coupling for the write operations.
+
+For the evaluation, we analyzed the influence of $\varepsilon$ on the performance. Additionally, we compared the B$^\varepsilon$-Tree design to a B$^+$-Tree that makes use of similar techniques as well as two LSM-Tree implementations, Google's LevelDB and Facebook's RocksDB.
+
+Our evaluation showed that the B$^\varepsilon$-Tree performed write-only operations faster than the B$^+$-Tree both with and without the overhead of the 2Q buffer, regardless of the number of worker threads. Read-only workloads achieved a slightly lower throughput. While the performance of the B$^\varepsilon$-Tree scaled with multiple threads during all workloads, mixed workloads caused the B$^\varepsilon$-Tree scalability to drop significantly due to the conflicts of the lock-based node accesses.\newline
+Generally, the overhead caused by the 2Q buffer outweighed the performance of the B$^\varepsilon$-Tree when multiple threads were in use. At the same time, its throughput was still higher than that of LevelDB during all test runs. Regarding writes, while RocksDB beat our design with $\geq 3$ threads, the B$^\varepsilon$-Tree still always outperformed RocksDB with one thread and sometimes even with two threads.
+
+Although our design does not cover properties such as crash-resistance, we still believe that B$^\varepsilon$-Trees could be used to increase write throughput in key-value stores. Additionally, due to their similarities with traditional B$^+$-Trees, they can be easily built on top of preexisting buffer structures.

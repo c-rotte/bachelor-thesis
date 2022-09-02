@@ -1,0 +1,704 @@
+% !TeX root = ../main.tex
+% Add the above to each chapter to make compiling the PDF easier in some editors.
+
+\chapter{Implementation}\label{chapter:implementation}
+Usually, to operate on working sets that do not fit into main memory, B$^+$-Trees and other index structures are implemented on top of a page buffer. The tree structure is then logically mapped onto these pages. This lets the page buffer evict currently unused parts of the tree for others that are requested by worker threads operating on the tree. To minimize these page evictions and, therefore, expensive I/O writes, the buffer generally employs a replacement strategy to detect "hot" pages that are often requested and keep them in memory while swapping out unneeded "cold" pages for new ones.
+
+Our B$^\varepsilon$-Tree reference implementation, which we describe in the following, is built on such a page buffer. Additionally, in order to support multiple worker threads at the same time, we modify the design of the textbook B$^\varepsilon$-Tree to enable parallel access to keep node contention on simultaneous write operations at a minimum.
+
+\section{Base System}
+Figure \ref{fig:design_layers} shows the layers of our implementation design. The B$^\varepsilon$-Tree offers key-value inserts via \texttt{insert}, updates via \texttt{update}, deletes via \texttt{erase} and point lookups via \texttt{find}. Every node of the B$^\varepsilon$-Tree is stored on one page with a fixed size. Pages are stored as-is on disk. The underlying page buffer employs a variant of the 2Q algorithm \cite{source_2Q} for its replacement operations. Finally, we use a segment manager to store the pages in a single file on disk.
+
+\begin{figure}[h]
+	\centering
+	\scalebox{0.9}{
+		\begin{tikzpicture}[
+			node distance=7mm,
+			default_node/.style={
+				rectangle,
+				draw=black, 
+				text centered,
+				minimum width=12mm,
+				minimum height=12mm,
+				text width=3cm
+			},
+			desc/.style={
+				minimum height=2cm,
+				text width=2.5cm,
+				text centered,
+				align=center,
+				draw=none
+			},
+			line/.style={
+				<->,
+			}
+			]
+			
+			% Descriptions
+			
+			%\node [desc, minimum height=5mm] (D0) {\textbf{Main Interfaces}};
+			\node [desc, below=of D0] (D1) {
+				\texttt{insert()}
+				\texttt{update()}
+				\texttt{erase()}
+				\texttt{find()}
+			};
+			\node [desc, below=of D1] (D2) {
+				\texttt{createPage()}
+				\texttt{deletePage()}
+				\texttt{pinPage()}
+				\texttt{unpinPage()}
+			};
+			\node [desc, below=of D2] (D3) {
+				\texttt{createBlock()}
+				\texttt{deleteBlock()}
+				\texttt{readBlock()}
+				\texttt{writeBlock()}
+			};
+			\node [desc, below=of D3] (D4) {
+				\texttt{glibc:}
+				\texttt{\textcolor{darkgray}{pread()}}
+				\texttt{\textcolor{darkgray}{pwrite()}}
+				\texttt{\textcolor{darkgray}{ftruncate()}}
+			};
+			
+			% Levels
+			
+			\node [default_node, left=of D1] (tree) {B$^\varepsilon$-Tree};
+			\node [default_node, left=of D2] (buffer) {Page Buffer};
+			\node [default_node, left=of D3] (segments) {Segment Manager};
+			\node [default_node, left=of D4] (disk) {Disk Storage};
+			
+			\path [line] (tree) edge [below] (buffer);
+			\path [line] (buffer) edge [below] (segments);
+			\path [line] (segments) edge [below] (disk);
+			
+		\end{tikzpicture}
+	}
+	\caption{Implementation Layers and Their Respective Interfaces}
+	\label{fig:design_layers}
+\end{figure}
+
+\subsection{Disk Storage}
+We logically group the pages saved on disk into different segments of blocks of the same size as the pages. The segments are arranged next to each other and operate on independent ranges of a shared file. Every segment is individually responsible for managing the blocks in its assigned range. Blocks can be created, written to, read from, and marked as deleted. We can delete blocks by saving them in a free list, a singly linked list connecting all deleted blocks.
+
+The segments are collectively referenced by a segment manager. In order to circumvent calling \texttt{ftruncate} for each new block, the segments grow exponentially in size (we use a growth factor of 1.25). Additionally, to keep the creation and deletion of blocks thread-safe, the segment manager protects itself and each segment respectively using a \texttt{std::shared\_mutex}. However, concurrent reads and writes to the same block within one segment are not protected by the segment manager or the segment itself. This is handled by the page buffer.
+
+\subsection{Page Buffer}\label{5.1.2}
+The 2Q strategy combines a Least Recently Used (LRU) queue with a First In, First Out (FIFO) queue. Implementation-wise, both the FIFO and the LRU queues are realized using a linked list to store the elements and a hash map that maps the keys to the list nodes to grant constant modification and lookup times. LRU strategies usually perform well when recognizing hot pages. However, pages that are accessed once take time to be evicted again since an LRU queue moves every accessed page to its front. The 2Q algorithm tries to prevent that by moving only pages to the LRU queue that were accessed at least twice while being in memory. The others are kept in the FIFO queue.
+
+\begin{figure}[h]
+	\centering
+	\begin{minipage}[t]{.48\textwidth}
+		\captionof{listing}{2Q Update Procedure}
+		\label{fig:update_queue}
+		\vspace*{5mm}
+		\begin{algorithmic}[1]
+			\Function{update\_queue }{page\_id}
+			\If{page\_id $\in$ FIFO}
+			\State FIFO.remove(page\_id)
+			\State LRU.push(page\_id)
+			\ElsIf{page\_id $\in$ LRU}
+			\State LRU.remove(page\_id)
+			\State LRU.push(page\_id)
+			\Else
+			\State FIFO.push(page\_id)
+			\EndIf
+			\EndFunction
+		\end{algorithmic}
+	\end{minipage}%
+	\begin{minipage}[t]{.52\textwidth}
+		\captionof{listing}{2Q Lookup Procedure}
+		\label{fig:find_in_queue}
+		\vspace*{5mm}
+		\begin{algorithmic}[1]
+			\Function{find\_in\_queue }{ }
+			\If{FIFO.size() $\geq$ 1}
+			\State page\_id $\leftarrow$ FIFO.pop(page\_id)
+			\State return page\_id
+			\ElsIf{LRU.size() $\geq$ 1}
+			\State page\_id $\leftarrow$ LRU.pop(page\_id)
+			\State return page\_id
+			\EndIf
+			\State error("both queues are empty")
+			\EndFunction
+		\end{algorithmic}
+	\end{minipage}
+\end{figure}
+
+Listings \ref{fig:update_queue} and \ref{fig:find_in_queue} show both the insert/update and lookup/removal procedures of a 2Q. By preferring the FIFO queue when looking for eviction candidate pages, we can keep the hot pages in memory while swapping out pages that were referenced only once. \cite{source_2Q}
+
+Worker threads can request ("pin") and release ("unpin") pages by referencing their ID. These operations are again protected by a \texttt{std::shared\_mutex}. The buffer internally keeps a hashtable to map each ID to the actual location of the page in memory. Apart from its data, each page additionally contains metadata in the form of a flag indicating whether its data is different from the one of the disk ("dirty"), a pin counter, and a \texttt{std::shared\_mutex} to, again, protect its data from concurrent operations.
+
+In order to pin a page, each thread first assumes that the page is already in memory and acquires the shared lock of the page buffer. If the page is indeed in memory, the thread can look up its location, increase its pin counter, release the buffer's mutex, and lock the page. Else, it has to restart, lock the mutex of the buffer exclusively and check whether the page can be loaded into memory without evicting another page. Whenever it cannot, it has to select a page with zero pins from either the FIFO or the LRU queue, evict it, and load the requested page into memory.
+
+When a page is evicted, the buffer first checks whether its data differs from the state currently saved on disk. If it does, we first have to write it to disk before we can remove it from the buffer. Since I/O operations are usually one of the main bottlenecks for these kinds of operations, we always release the main mutex of the buffer before them so that other threads may pin their pages in the meantime. However, we can neither guarantee that our page has already been loaded into the buffer nor that our eviction candidate was pinned in the meantime. Thus, after the I/O operation has finished, we have to re-lock the buffer mutex, check whether the two conditions described above are still fulfilled, and restart if they are not.
+
+Since the page buffer design naturally involves overhead in the form of I/O operations and mutex-protected data structures, we also implement an "optimal" page buffer. This optimal page buffer stores the entire structure in memory and uses an atomic counter (\texttt{std::atomic\_size\_t}) for the page IDs. Each ID describes the memory offset of the respective page at the same time. Consequently, there are no I/O operations, and mapping an ID to its page can happen concurrently while the interface of pinning and unpinning pages stays the same. This lets us additionally evaluate the performance of our B$^\varepsilon$-Tree without the overhead of the 2Q page buffer later on.
+
+\section{B$^\varepsilon$-Tree}
+We define our B$^\varepsilon$-Tree to handle fixed key types (\texttt{class K}) and value types (\texttt{class V}) as template parameters. Additionally, as described above, each B$^\varepsilon$-Tree object depends on a predefined page (or block) size (\texttt{std::size\_t B}) and an $\varepsilon \in [0;1]$ (\texttt{short EPSILON}). Since C++ does not allow floating point values as template parameters, we pass the value of $\varepsilon$ in percent as an integer and process it with a \texttt{constexpr}.
+
+\subsection{Nodes}\label{5.2.1}
+
+\subsubsection{Layout}
+
+Listing \ref{fig:upsert_struct} shows the definition for the upserts each B$^\varepsilon$ inner node stores apart from its pivot elements, and their child pointers in the form of page ids. We use one byte for the upsert type and a \texttt{std::uint64\_t} for the timestamp, which prevents the timestamps from overflowing in practice. A global atomic counter generates a strictly monotonically increasing timestamp for each new operation. Even though a delete operation does not require any value, we do not wrap the value into a \texttt{std::optional} which would need additional memory. Instead, we require \texttt{V} to be default-constructible.
+
+\begin{figure}[h]
+	\centering
+	\captionof{listing}{Upsert Definition}
+	\label{fig:upsert_struct}
+	\vspace*{5mm}
+	\begin{cminted}[linenos=false]{c++}
+template<class K, class V>
+struct Upsert {
+    K key;
+    V value;
+    std::uint64_t timeStamp = -1;
+    unsigned char type = UpsertType::INSERT;
+    
+    auto operator<=>(const Upsert&) const;
+    auto operator<=>(const K&) const;
+};
+	\end{cminted}
+\end{figure}
+
+Textbook B$^\varepsilon$-Tree upsert buffers are handled as an unordered write-append buffer, although implementations typically use a balanced tree structure \cite{b_epsilon_tree}. In order to enable later optimizations, we instead treat each upsert buffer as a sorted array. Upserts are sorted first according to their keys and then by their timestamps. Additionally, we overload the three-way comparison function to be able to compare keys against an upsert key.\newline
+Leaf nodes store each key-value pair directly instead of using disk pointers. This prevents unnecessary I/O-operations when reading or writing to a leaf since the pairs can be cached in memory among frequent accesses.
+
+Since the maximum number of pivot, pointer, and buffer slots in the inner nodes as well as the maximum number of key-value pairs in the leaf nodes solely depends on the template parameters \texttt{K}, \texttt{V}, \texttt{B} and \texttt{EPSILON}, we can calculate them at compile time and use a \texttt{std::array} for storage. Note that this approach would not work for dynamic key-value types and sizes.
+
+To allocate a node on the preexisting memory of a page, we reserve one byte of that memory to differentiate between the different node types and allocate the node using a \texttt{placement new}. We can then cast the pointer to the memory location to gain access to the node. Additionally, we align the node memory with \texttt{std::max\_align\_t} to avoid undefined behavior when interpreting the memory as a node. 
+
+\subsubsection{Operations}
+
+Like any B-Tree, our B$^\varepsilon$-Tree has to support node splits. While leaf splits are identical to B$^+$-Tree leaf splits, splitting inner nodes additionally requires partitioning the upsert buffers. Note that because we typically only split an inner node with respect to its pivots, the two resulting upsert buffers are rarely evenly occupied.
+
+Since B$^\varepsilon$-Trees are usually used with insert-heavy workloads, we accept under-full nodes and forego node merges. The idea is that subsequent insert operations fill empty key-value pair slots in the leaf nodes left behind by delete operations.
+
+Inserting an upsert into a buffer behaves similarly to inserting a pivot-pointer pair. As described above, we keep each upsert buffer sorted in the order defined by the key and the timestamp of the included upserts. Thus, in the worst case, inserting an upsert requires shifting all preexisting upserts to the right. Treating the upsert buffers as unsorted write-append buffers would let us insert upserts in constant time. However, this approach enables logarithmic lookups regarding the buffer size $B-B^\varepsilon$ to continuous upserts addressed to the same key. Storing these compact "message blocks" benefits both lookup operations, which would otherwise need to scan the entire buffer, and node flushes. In order to keep a node buffer as dense as possible with respect to the message blocks after a flush, we need to merge two upsert buffers, which can be done in linear time if both buffers are sorted. Section \ref{5.2.3} further describes how we perform such a flush.
+
+When a node buffer contains multiple upsert messages $\{U_1^K, U_2^K, ..., U_n^K\}$ that are addressed to the same key $K$, these messages together describe a section of the ongoing change of $K$ and its associated value $V_K$. However, since we are only interested in the latest state of the tuple $(K, V_K)$, we can merge $\{U_1^K, U_2^K, ..., U_n^K\}$ into a new upsert $U_{new}^K$ without losing any required information, assuming associativity of the update operation. Consequently, merging $U_{new}^K$ into another upsert at a lower level or applying it to the leaf node will result in the same state for $(K, V_K)$.\newline
+Instead of waiting for a buffer to be fully occupied and then accumulating the upserts with the same key, the operation can happen in place when an upsert is added to a node buffer. As a result, this will avoid shifting other upserts to the right if there is a preexisting upsert with the same key, as the message will get replaced with the resulting upsert of the operation.\newline
+Table \ref{tab:binary_upsert_merge_operation} defines the binary merge operation for every input combination (we use $V_A+V_B$ as syntactic sugar for an update of value $V_A$ with value $V_B$). We can then use this operation to prevent the upsert buffers from containing more than one upsert addressed to the same key. Note that we assume updates and deletes to have no effect if no value exists yet, and inserts to overwrite preexisting values.
+
+\begin{table}[h]
+	\centering
+	\caption{Binary Upsert Merge Operation}
+	\label{tab:binary_upsert_merge_operation}
+	\vspace*{5mm}
+	\begin{tabular}{@{}lll@{}}
+		\toprule
+		\makecell[l]{First Upsert\\(Timestamp $t$)} & \makecell[l]{Second Upsert\\(Timestamp $t+n$)} & \makecell[l]{Resulting Upsert}                                                              \\ \midrule
+		\addlinespace[1mm]
+		$Insert_t$    & $Insert_{t+n}$  & \makecell[l]{$Insert_{t+n}$\\(overwrites $Insert_{t})$}                            \\
+		\addlinespace[1mm]
+		$Insert_t$    & $Update_{t+n}$  & \makecell[l]{new $Insert_{t+n}$ with value $V_t+V_{t+n}$}                         \\
+		\addlinespace[1mm]
+		$Insert_t$    & $Delete_{t+n}$  & \makecell[l]{$Delete_{t+n}$\\(must propagate to delete any old value)}             \\
+		\addlinespace[1mm]
+		$Update_t$    & $Insert_{t+n}$  & \makecell[l]{$Insert_{t+n}$\\(overwrites any old value)}                           \\
+		\addlinespace[1mm]
+		$Update_t$    & $Update_{t+n}$  & \makecell[l]{new $Update_{t+n}$ with value $V_t+V_{t+n}$\\(assumes associativity)} \\
+		\addlinespace[1mm]
+		$Update_t$    & $Delete_{t+n}$  & $Delete_{t+n}$                                                      \\
+		\addlinespace[1mm]
+		$Delete_t$    & $Insert_{t+n}$  & \makecell[l]{$Insert_{t+n}$\\(already overwrites the old value)}                   \\
+		\addlinespace[1mm]
+		$Delete_t$    & $Update_{t+n}$  & \makecell[l]{$Delete_t$\\(updating a non-existing value has no effect)}            \\
+		\addlinespace[1mm]
+		$Delete_t$    & $Delete_{t+n}$  & \makecell[l]{$Delete_{t}$\\(deleting a non-existing value has no effect)}          \\ 
+		\addlinespace[1mm]
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+\subsection{Multithreading}
+
+Usually, for a B-Tree to safely handle concurrent write operations with one lock per node, each thread has to exclusively lock every node along its path to the respective leaf node since splitting the leaf node may propagate up to the root node. Because the root node is thus always part of the path, every write operation requires locking the whole structure. This makes it impossible for the B-Tree to scale with multiple threads.\newline
+Since splits in general, however, happen rarely, a common approach is to acquire the respective shared locks of the path first, except for the leaf node \cite{b_tree_locking}. If the thread detects that a node would overflow, it aborts the operation and restarts with an exclusively locked path. This enables multiple threads to perform writes simultaneously most of the time.
+
+Another approach is to preemptively split full nodes on the way down \cite{b_tree_locking}. Although this often results in early splits that are not immediately required, it enables the thread to use lock coupling where only a maximum of two nodes are locked at once. Additionally, with a growing write-heavy workload, these splits would occur later anyway. While the nodes still have to be locked exclusively, the upper tree levels, especially the root node, do not have to be locked during the whole operation.
+
+In contrast to a B-Tree, where write operations mainly occur on the leaf level, writes to a B$^\varepsilon$-Tree heavily involve the upper levels due to the buffered upserts. Since every write first inserts an upsert into the root node by design, the first approach cannot be applied as-is.\newline
+Therefore, we make use of preemptive splitting: Every time we flush down a range of upserts, we check whether the current node can manage a split of the respective child nodes. If this is not possible, we split it (see fig. \ref{fig:preemptive_split}), which lets us release parent nodes early during a flush operation for other threads to access the buffers of these parents simultaneously.\newline
+Note that the current node may need more than one free pivot slot since a flush can target multiple child nodes, as further described in section \ref{5.2.5}.
+
+\begin{figure}[h]
+	\centering
+	\scalebox{0.85}{
+		\begin{tikzpicture}[
+			inner_node/.style={
+				rectangle split,
+				rectangle split horizontal=false,
+				draw=black,
+				rectangle split ignore empty parts,
+				rectangle split part align={center,base},
+				text centered
+			},
+			inner/.style={
+				rectangle split horizontal,
+				draw=black,
+				rectangle split ignore empty parts,
+				rectangle split part align={center,base},
+				rectangle split parts=20,
+				text centered
+			},
+			dotted_node/.style={
+				rectangle,
+				draw=none, 
+				text centered,
+				align=center,
+				text width=0.25cm, 
+				text height=0.5cm, 
+				text depth=0.5cm
+			},
+			edge from parent/.style={->, draw}
+			]
+			
+			\node[dotted_node] (ROOT) {
+				...
+			};
+			
+			\node[inner_node, below=of ROOT] (CENTER) {
+				\begin{tikzpicture}
+					\node[inner, rectangle split part fill={white,white,white,blue!20}] (ROOT_pivots)
+					{$U^{K_1}_1$\nodepart{two}$U^{K_2}_1$\nodepart{three}$U^{K_3}_1$\nodepart{four}$U^{K_4}_1$\nodepart{five}$U^{K_4}_2$};
+				\end{tikzpicture}
+				\nodepart{two} \begin{tikzpicture}
+					\node[inner] (ROOT_pivots)
+					{1\nodepart{two}2\nodepart{three}3};
+				\end{tikzpicture}
+			};
+			
+			\node[dotted_node, below=of CENTER, xshift=-0.8cm] (child2) {
+				...
+			};
+			\node[dotted_node, left=of child2] (child1) {
+				...
+			};
+			\node[dotted_node, right=of child2] (child3) {
+				...
+			};
+			\node[dotted_node, right=of child3] (child3_1) {
+				...
+			};
+			
+			\path [->, draw=blue] (ROOT) edge [below] (CENTER);
+			
+			\path [->] (CENTER) edge [below] (child1);
+			%\path [->, dotted, thick] (child2) edge [below, bend right] node[midway, right, draw=black, solid, xshift=1mm, semithick] {2} (CENTER);
+			\path [->] (CENTER) edge [below] (child2);
+			\path [->] (CENTER) edge [below] (child3);
+			\path [->, draw=blue] (CENTER) edge [below] (child3_1);
+			
+			% ------------------------------------------------------------
+			
+			\node[inner_node, right=of CENTER, xshift=0.5cm] (CENTER2) {
+				\begin{tikzpicture}
+					\node[inner] (ROOT_pivots)
+					{$U^{K_1}_1$\nodepart{two}$U^{K_2}_1$\nodepart{three}\phantom{$U^{K_3}_1$}\nodepart{four}\phantom{$U^{K_4}_1$}\nodepart{five}\phantom{$U^{K_4}_2$}};
+				\end{tikzpicture}
+				\nodepart{two} \begin{tikzpicture}
+					\node[inner] (ROOT_pivots)
+					{1\nodepart{two}\phantom{3}\nodepart{three}\phantom{1}};
+				\end{tikzpicture}
+			};
+			
+			\node[inner_node, right=of CENTER2, xshift=-0.5cm] (CENTER3) {
+				\begin{tikzpicture}
+					\node[inner] (ROOT_pivots)
+					{$U^{K_3}_1$\nodepart{two}\phantom{$U^{K_4}_1$}\nodepart{three}\phantom{$U^{K_4}_2$}\nodepart{four}\phantom{$U^{K_4}_1$}\nodepart{five}\phantom{$U^{K_4}_2$}};
+				\end{tikzpicture}
+				\nodepart{two} \begin{tikzpicture}
+					\node[inner] (ROOT_pivots)
+					{3\nodepart{two}\phantom{3}\nodepart{three}\phantom{1}};
+				\end{tikzpicture}
+			};
+			
+			\node[dotted_node, above=of CENTER2, text width=2cm, xshift=2.6cm] (ROOT2) {
+				... 2 ...
+			};
+			
+			\node[dotted_node, below=of CENTER2, xshift=-0.75cm] (child4) {
+				...
+			};
+			\node[dotted_node, right=of child4] (child5) {
+				...
+			};
+			
+			\node[dotted_node, below=of CENTER3, xshift=-0.75cm] (child6) {
+				...
+			};
+			\node[dotted_node, right=of child6] (child7) {
+				...
+			};
+			
+			\path [->] (ROOT2) edge [below] (CENTER2);
+			\path [->] (ROOT2) edge [below] (CENTER3);
+			
+			\path [->] (CENTER2) edge [below] (child4);
+			\path [->] (CENTER2) edge [below] (child5);
+			
+			\path [->] (CENTER3) edge [below] (child6);
+			\path [->] (CENTER3) edge [below] (child7);
+			
+			% ------------------------------------------------------------
+			
+			\draw[->, color=darkgray, very thick] (2.9,-2.6) -- (3.5,-2.6);
+			
+		\end{tikzpicture}
+	}
+	\caption[A preemptive node split]{A preemptive node split. As we flush $U^{K_4}_1$ and $U^{K_4}_2$ to the fourth child, we preemptively split the node since its pivot slots are fully occupied. The remaining upserts ${U^{K_1}_1, U^{K_2}_1, U^{K_3}_1}$ are divided between the two resulting nodes.}
+	\label{fig:preemptive_split}
+\end{figure}
+
+Flushes, however, only happen when a buffer is full. This means that, even with preemptive splitting, large buffers cause scaling issues since most operations happen solely on the not fully occupied root node buffer. To counter this, we modify the B$^\varepsilon$-Tree textbook design and introduce a separate root node. The root node does not have a buffer but only pivots and child pointers - similar to the inner nodes of a B$^+$-Tree.\newline
+We then combine this idea with the aforementioned second approach. Since our new root node does not contain upsert messages, a writer thread does not have to lock it exclusively most of the time (see figure \ref{fig:separate_root}). Instead, it can optimistically acquire its shared lock and access the respective buffered node on the second level exclusively (see listing \ref{fig:upsert_procedure}). When it detects an upcoming split on that level, it aborts and restarts the operation by locking the root exclusively. However, when the root node eventually overflows, we need to split it into multiple child nodes. Since every node as of the second level is a buffered node, and we use the same page size for all nodes, they thus contain fewer pivot slots than the root node.
+
+This idea does not fundamentally change the structure of the B$^\varepsilon$-Tree but rather organizes multiple B$^\varepsilon$-Subtrees in a node that can be accessed concurrently. It also means that our B$^\varepsilon$-Tree design will eventually stop scaling with both the tree size and the number of worker threads if we do not adjust the root node size accordingly.
+
+\begin{figure}[h]
+	\centering
+	\scalebox{0.9}{
+		\begin{tikzpicture}[
+			inner_node/.style={
+				rectangle split,
+				rectangle split horizontal=false,
+				draw=black,
+				rectangle split ignore empty parts,
+				rectangle split part align={center,base},
+				text centered
+			},
+			inner/.style={
+				rectangle split horizontal,
+				draw=black,
+				rectangle split ignore empty parts,
+				rectangle split part align={center,base},
+				rectangle split parts=20,
+				text centered
+			},
+			dotted_node/.style={
+				rectangle,
+				draw=none, 
+				text centered,
+				align=center,
+				text width=1cm, 
+				text height=1cm, 
+				text depth=1cm
+			},
+			edge from parent/.style={->, draw}
+			]
+			
+			\node[inner_node] (ROOT) {
+				\begin{tikzpicture}
+					\node[inner] (ROOT_pivots)
+					{$K_1$\nodepart{two}$K_2$\nodepart{three}$K_3$\nodepart{four}$K_4$\nodepart{five}$K_5$\nodepart{six}$K_6$\nodepart{seven}$K_7$\nodepart{eight}$K_8$\nodepart{nine}$K_9$\nodepart{ten}...};
+				\end{tikzpicture}
+			};
+			
+			\node[inner_node, below=of ROOT, yshift=-1cm] (child1) {
+				\begin{tikzpicture}
+					\node[inner] (ROOT_pivots){upsert buffer};
+				\end{tikzpicture}
+				\nodepart{two} \begin{tikzpicture}
+					\node[inner] (ROOT_pivots){pivots};
+				\end{tikzpicture}
+			};
+			
+			\node[dotted_node, left=of child1] (child2) {
+				\textcolor{gray}{...}
+			};
+			
+			\node[inner_node, left=of child2] (child3) {
+				\begin{tikzpicture}
+					\node[inner] (ROOT_pivots){upsert buffer};
+				\end{tikzpicture}
+				\nodepart{two} \begin{tikzpicture}
+					\node[inner] (ROOT_pivots){pivots};
+				\end{tikzpicture}
+			};
+			
+			\node[dotted_node, right=of child1] (child4) {
+				\textcolor{gray}{...}
+			};
+			
+			\node[inner_node, right=of child4, draw=gray] (child5) {
+				\begin{tikzpicture}
+					\node[inner, draw=gray] (ROOT_pivots){\textcolor{gray}{upsert buffer}};
+				\end{tikzpicture}
+				\nodepart{two} \begin{tikzpicture}
+					\node[inner, draw=gray] (ROOT_pivots){\textcolor{gray}{pivots}};
+				\end{tikzpicture}
+			};
+			
+			\path [->] (ROOT) edge [below] node[midway, draw=none, fill=white] {$T_2$} (child1);
+			\path [->, draw=gray] (ROOT) edge [below] (child2);
+			\path [->] (ROOT) edge [below] node[midway, draw=none, fill=white, xshift=-5mm] {$T_1$} (child3);
+			\path [->, draw=gray] (ROOT) edge [below] (child4);
+			\path [->, draw=gray] (ROOT) edge [below] (child5);
+			
+			\node[draw=red, fit=(ROOT), label=above:{\color{red} \faLock { (T1,T2: shared) }}, text=red] {};
+			\node[draw=blue, fit=(child3), label=below:{\color{blue} \faLock { (T1: exclusive) }}, text=blue] {};
+			\node[draw=blue, fit=(child1), label=below:{\color{blue} \faLock { (T2: exclusive) }}, text=blue] {};
+			
+			%\path [->, dotted, thick] (child2) edge [below, bend right] node[midway, right, draw=black, solid, xshift=1mm, semithick] {2} (CENTER);
+			
+		\end{tikzpicture}
+	}
+	\caption[Lock Coupling with a separate root]{Lock Coupling with a separate root. $T_1$ and $T_2$ could acquire the shared lock of the root. Therefore, both threads can access their respective subtree simultaneously.}
+	\label{fig:separate_root}
+\end{figure}
+
+\begin{figure}[h]
+	\centering
+	\captionof{listing}{Upsert Method}
+	\label{fig:upsert_procedure}
+	\vspace*{5mm}
+	\begin{cminted}[linenos=false]{c++}
+template<class K, class V, std::size_t B, short EPSILON>
+void BeTree<K, V, B, EPSILON>::upsert(Upsert<K, V> upsert) {
+    bool rootLeaf = (header.treeHeight == 1);
+    PageT* rootPage = &pageBuffer.pinPage(header.rootID, rootLeaf);
+    // first case: leaf node (direct operation)
+    if (accessNode(*rootPage).nodeType() == NodeType::LEAF) {
+        handleLeafUpsert(std::move(upsert), rootPage);
+        return;
+    }
+    // second case: root node -> first, try shared locking
+    bool success = handleRootUpsert(upsert, rootPage, false);
+    if (!success) {
+        // overflow detected -> retry using exclusive locking
+        // (handleRootRootUpsert already unpinned the root page)
+        rootPage = &pageBuffer.pinPage(header.rootID, true);
+        handleRootUpsert(std::move(upsert), rootPage, true);
+    }
+}
+	\end{cminted}
+\end{figure}
+
+\subsection{Upsert Flushes} \label{5.2.3}
+
+When a buffer is fully occupied, we need to remove a subset of its upserts and divide it over the buffers of its respective children. Typically, a B$^\varepsilon$-Tree selects the child with the most pending messages as its target, which is sufficient in most cases \cite{b_epsilon_tree}. Except for the root node, depending on the current node's key distribution, it can be necessary to flush upserts to multiple children.
+
+Each flush makes use of the \texttt{remove\_message} procedure (see listing \ref{fig:remove_messages}). This procedure operates on the target node buffer $\{U^T_1, U^T_2, ..., U^T_n\}$ and takes in the incoming upserts $\{U^P_1, U^P_2, ..., U^P_m\}$ from the parent node. It then merges both $\{U^T_1, U^T_2, ..., U^T_n\}$ and $\{U^P_1, U^P_2, ..., U^P_m\}$, and again flushes down enough message blocks, beginning with the largest, to prevent the target node from overflowing. The remaining message blocks are kept in the current target node. Note that, because we never store two different upserts addressed to the same key in one buffer, as described above, we cannot use \texttt{std::merge} which already merges two sorted ranges. Instead, we use an adjusted version of \texttt{std::merge} which combines these upserts accordingly to table \ref{tab:binary_upsert_merge_operation}.
+
+\begin{figure}[h]
+	\captionof{listing}{Messages Removal Procedure}
+	\label{fig:remove_messages}
+	\vspace*{5mm}
+	\begin{algorithmic}[1]
+		\Function{remove\_messages }{node, upserts}
+		\State needed\_slots $\leftarrow$ $|$node.upserts$|$ + $|$upserts$|$ - node.upserts.maxSize()
+		\State all\_upserts $\leftarrow$ merge(node.upserts, upserts) \space\textcolor{gray}{\# merges upserts with equal keys}
+		\State message\_block\_references $\leftarrow$ scan\_blocks(all\_upserts)
+		\State sort(message\_block\_references) \space\textcolor{gray}{\# sorts the message blocks by decreasing size}
+		\State spare\_upserts $\leftarrow$ []
+		\For{block $\in$ message\_block\_references}
+		\If{$|$spare\_upserts$| \geq$ needed\_slots}
+		\State \textbf{break}
+		\EndIf
+		\State message\_block\_references.remove(block)
+		\State spare\_upserts.push(block)
+		\EndFor
+		\State sort\_by\_key(message\_block\_references) \space\textcolor{gray}{\# sorts the remaining messages by key}
+		\State node.upserts.clear()
+		\For{block $\in$ message\_block\_references}
+		\State node.upserts.push(block)
+		\EndFor
+		\State \Return spare\_upserts
+		\EndFunction
+		\newline
+	\end{algorithmic}
+\end{figure}
+
+The combination of flushing multiple message blocks and preemptive splitting prevents us from using the typical depth-first approach like the reference implementation of the original paper does \cite{reference_b_epsilon_tree}. Otherwise, we would basically lock the whole tree during flushes. Instead, we use a level order traversal from the second level downwards using a FIFO \texttt{std::deque}. This queue holds tuples containing the current node and its former upserts removed using \texttt{removed\_messages}. Each iteration removes the current tuple and calls \texttt{traverse\_tree} (see listing \ref{fig:level_order_traversal}). If the current node flushes its upserts to a leaf node, \texttt{traverse\_tree} treats the upserts as operations again and applies them to the respective node. Else, after potentially executing a preemptive split, each message block is flushed to the corresponding child node.\newline
+We then call \texttt{remove\_messages} on each child node and push it into the queue if its buffer is also fully occupied. By applying this level order traversal, we can quickly unlock the upper levels again, which are exponentially denser regarding the number of nodes due to the nature of the tree structure.
+
+\begin{figure}[h]
+	\captionof{listing}{Flush Traversal Procedure}
+	\label{fig:level_order_traversal}
+	\vspace*{5mm}
+	\begin{algorithmic}[1]
+		\Function{traverse\_tree }{node, upsert\_map}
+		\State \textcolor{gray}{\# <upsert\_map> contains the removed upserts from <node>}
+		\For{(child\_index, upserts) $\in$ upsert\_map}
+		\State child $\leftarrow$ node.children[child\_index]
+		
+		\State \textcolor{gray}{\# leaf node level}
+		\If{child.isLeaf()}
+		\State future\_size $\leftarrow$ child.size()
+		\For{upsert $\in$ upserts}
+		\State apply\_upsert(child, upsert)
+		\If{need\_to\_split(child)}
+		\State split(child)
+		\EndIf
+		\EndFor
+		
+		\Else
+		\State \textcolor{gray}{\# inner node level}
+		\If{child.upserts.max\_size() - child.upserts.size() $\geq$ upserts.size()}
+		\State \textcolor{gray}{\# the child has enough space for the upserts}
+		\State child.upserts $\leftarrow$ merge(child.upserts, upserts)
+		\Else
+		\State map $\leftarrow$ remove\_messages(child, upserts)
+		\If{child.pivots.max\_size() - child.pivots.size() $\le$ map.size()}
+		\State \textcolor{gray}{\# preemptive split}
+		\State (left\_node, right\_node) $\leftarrow$ split(child)
+		\State \textcolor{gray}{\# divide the removed upserts with respect to the split}
+		\State (left\_map, right\_map) $\leftarrow$ split\_map(map, left\_node, right\_node)
+		\State queue.push(left\_node, left\_map)
+		\State queue.push(right\_node, right\_map)
+		\Else
+		\State queue.push(child, upserts)
+		\EndIf 
+		\EndIf
+		\EndIf
+		\EndFor
+		\EndFunction
+		\newline
+	\end{algorithmic}
+\end{figure}
+
+Note that listing \ref{fig:level_order_traversal} simplifies the actual traversal algorithm. For example, we apply preemptive splitting on the leaf level to be able to unpin the parent node quickly. Only then can we execute the collected upserts on the respective leaf node.
+
+As described above, this design uses temporarily storing upserts during each flush. Therefore, the tree is not resistant against crashes, even if the page buffer would be. 
+
+\subsection{Lookups}\label{5.2.4}
+
+When our B$^\varepsilon$-Tree has a height of at least one, each node on the way down, except for the root node, potentially contains information about the current state of the value $V_K$ associated with the given lookup key $K$. In order to reconstruct this state, our \texttt{point\_lookup} procedure (see listing \ref{fig:lookup_implementation}) therefore has to keep track of all updates addressed to $K$. Since older upserts are flushed first and thus are located on lower node levels, we have to temporarily save every update message and afterward apply them to the leaf value in reverse order. Inserts and deletes can be used instead of the leaf values to terminate the traversal earlier.
+
+\begin{figure}[h]
+	\captionof{listing}{Lookup Procedure}
+	\label{fig:lookup_implementation}
+	\vspace*{5mm}
+	\begin{algorithmic}[1]
+		\Function{point\_lookup }{key}
+		\State child $\leftarrow$ binary\_search(root.children(), key)
+		\State accumulator\_queue $\leftarrow$ [] \space\textcolor{gray}{\# contains the accumulated updates}
+		\State current\_value $\leftarrow$ NULL \space\textcolor{gray}{\# the final base value}
+		\While{child.type = INNER}
+		\State deleted $\leftarrow$ false
+		\State local\_update\_vector $\leftarrow$ [] \space\textcolor{gray}{\# contains the updates of the current node}
+		\State message\_block $\leftarrow$ binary\_search(child.upserts(), key)
+		\For{upsert $\in$ message\_block}
+		\If{upsert.type = DELETE}
+		\State local\_update\_vector $\leftarrow$ []
+		\State current\_value $\leftarrow$ NULL
+		\State deleted $\leftarrow$ true
+		\ElsIf{upsert.type = UPDATE}
+		\State local\_update\_vector.push(upsert.value)
+		\ElsIf{upsert.type = INSERT}
+		\State local\_update\_vector $\leftarrow$ []
+		\State current\_value $\leftarrow$ upsert.value
+		\State deleted $\leftarrow$ false
+		\EndIf
+		\EndFor
+		\If{deleted}
+		\State accumulator\_queue $\leftarrow$ []
+		\EndIf 
+		\State accumulator\_queue.push\_front(local\_update\_vector)
+		\If{deleted = true $\lor$ current\_value $\neq$ NULL}
+		\State \textbf{break}
+		\EndIf
+		\State child $\leftarrow$ binary\_search(child.children(), key)
+		\EndWhile
+		
+		\If{current\_value = NULL}
+		\State current\_value $\leftarrow$ binary\_search(child.upserts(), key)
+		\EndIf
+		
+		\For{update\_value $\in$ accumulator\_queue}
+		\State current\_value $\leftarrow$ current\_value + update\_value
+		\EndFor
+		
+		\State \Return current\_value
+		
+		\EndFunction
+		\newline
+	\end{algorithmic}
+\end{figure}
+
+Note that listing \ref{fig:lookup_implementation} describes the procedure for a general update operation. If the update operation is associative, we can use a single placeholder value instead of both the \texttt{accumulator\_queue} and the \texttt{local\_update\_vector}, similar to the merge operation described in section \ref{5.2.1}.
+
+\subsection{Considerations and Limitations}\label{5.2.5}
+\subsubsection{Preemptive Splitting}
+Let $n$ be the maximum number of pivot elements an inner node can hold. After splitting an arbitrary inner node $I$ with $n$ pivot elements into $I_{left}$ and $I_{right}$, each $I_{left}$ and $I_{right}$ will have at least $\ceil*{\frac{n}{2}}$ free pivot slots.\newline
+Likewise, every node can hold a maximum of $n + 1$ child pointers. Additionally, a flush of upsert messages can temporarily overflow the buffer of a node up to twice its size, as figure \ref{fig:twice_its_size} illustrates. Thus, the maximum number of addressed children during one flush is equal to $\ceil*{\frac{n + 1}{2}}$, which means that all children currently receive approximately the same number of messages. The messages addressed to the other $\floor*{\frac{n + 1}{2}}$ children can be stored in the current buffer.
+
+In order to be able to perform a flush with preemptive splitting from a parent node to its addressed children $\{C_1, C_2, ...\}$, we need to have enough space for a potential split of every child $\{C_1, C_2, ...\}$. Each path taken to the child nodes represents a potential split that has to fit into the current node. With one preemptive split, this can only be achieved if the resulting number of free pivot slots of both $I_{left}$ and $I_{right}$ is equal to the number of addressed children, or $\ceil*{\frac{n}{2}} = \ceil*{\frac{n + 1}{2}}$, which is only fulfilled for odd $n$.
+
+\begin{figure}[H]
+	\centering
+	\hspace*{-4.5cm}
+	\scalebox{0.9}{
+		\begin{tikzpicture}[
+			inner_node/.style={
+				rectangle split,
+				rectangle split horizontal=false,
+				draw=black,
+				rectangle split ignore empty parts,
+				rectangle split part align={center,base},
+				text centered
+			},
+			inner/.style={
+				rectangle split horizontal,
+				draw=black,
+				rectangle split ignore empty parts,
+				rectangle split part align={center,base},
+				rectangle split parts=20,
+				text centered
+			},
+			dotted_node/.style={
+				rectangle,
+				draw=none, 
+				text centered,
+				align=center,
+				text width=0.25cm, 
+				text height=0.5cm, 
+				text depth=0.5cm
+			},
+			edge from parent/.style={->, draw}
+			]
+			\node[inner_node, text width=5cm, label={[label distance=2mm]above:$A$}] (ROOT) {
+				\begin{tikzpicture}
+					\node[inner, minimum height=1cm, rectangle split part fill={blue!20,teal!20,green!20,lime!20,yellow!20}] (ROOT_pivots)
+					{\phantom{AAAAAA}\nodepart{two}\phantom{AAAAAA}\nodepart{three}\phantom{AAAAAA}\nodepart{four}\phantom{AAAAAA}\nodepart{five}\phantom{AAAAAA}};
+				\end{tikzpicture}
+				\nodepart{two} \begin{tikzpicture}
+					\node[inner] (ROOT_pivots)
+					{...};
+				\end{tikzpicture}
+			};
+			
+			\node[inner_node, text width=5cm, below=of ROOT, label={[label distance=2mm]above:$B$}] (ROOT2) {
+				\begin{tikzpicture}
+					\node[inner, minimum height=1cm, rectangle split part fill={blue!20,teal!20,green!20,lime!20,yellow!20}] (ROOT_pivots)
+					{\phantom{AAA}\nodepart{two}\phantom{AAAA}\nodepart{three}\phantom{AAAAAA}\nodepart{four}\phantom{AAAAAAAA}\nodepart{five}\phantom{AAAAAAAAA}};
+				\end{tikzpicture}
+				\nodepart{two} \begin{tikzpicture}
+					\node[inner] (ROOT_pivots)
+					{...};
+				\end{tikzpicture}
+			};
+			
+		\end{tikzpicture}
+	}
+	\caption[The state of two overflowed upsert buffers]{The state of two overflowed upsert buffers. Both $A$ and $B$ received every upsert of their parent buffer, overflowing their buffers by a factor of 2. A greedy approach that first moves the largest message blocks to the respective children is optimal for minimizing flushes. The more evenly distributed the message blocks are in size ($A$), the more message blocks need to be flushed.}
+	\label{fig:twice_its_size}
+\end{figure}
+
+\subsubsection{Upsert Flushes}
+When a flush targets a leaf node $L$, it is possible for the messages to only consist of new inserts, which creates an upper bound for the maximum number of flushed messages. If we always split leaf nodes in half, we only make space for $\floor*{\frac{s}{2}}$ tuples in both the old and the new leaf node, where $s$ denotes the maximum number of tuples any leaf node can hold. As a result, any upsert flush may only remove $\floor*{\frac{s}{2}}$ upserts from any given node buffer.
+
+In order to circumvent this, we can split $L$ with respect to the median key $K_M$ of the union of the flushed upsert keys $\{K_{U_1}, K_{U_2}, ..., K_{U_n}\}$ and the existing keys $\{K^1_L, K^2_L, ..., K^m_L\}$ of the leaf node. By choosing $K_M$ as the pivot key for the split, we can divide $\{K_{U_1}, K_{U_2}, ..., K_{U_n}\} \cup \{K^1_L, K^2_L, ..., K^m_L\}$ and their values evenly on both the resulting nodes $L_{left}$ and $L_{right}$ after the split. Because both key ranges are sorted, this can be done in logarithmic time with respect to $|\{K_{U_1}, K_{U_2}, ..., K_{U_n}\}| + |\{K^1_L, K^2_L, ..., K^m_L\}|$ without having to merge them beforehand. Consequently, the upper bound for the maximum number of flushed messages increases from $\floor*{\frac{s}{2}}$ to $s$.
+
+Since any upsert contains a key-value pair as well as an additional timestamp, its size will always be greater than that of a leaf tuple. Thus, the maximum amount of upserts a node buffer can hold will never exceed $s$ (regardless of the chosen value for $\varepsilon$) if both the inner and leaf nodes share the same page size. In summary, preemptive splitting does not prevent flushing all messages of one full node buffer.
+
+\subsubsection{The Range of $\varepsilon$}
+As described above, for any given $\varepsilon \in [0;1]$ and a node size of $B$ bytes, we use $B^\varepsilon$ bytes for the pivots (and their pointers) and $B - B^\varepsilon$ bytes for the upsert buffer. However, in reality, an inner node of a B$^\varepsilon$-Tree always needs at least a buffer with one upsert slot to handle write operations and two pivot elements to split itself (or three if we use preemptive splitting).
+
+Thus, instead of defining $B$ as the total node size $B_{total}$, we use it to describe $B_{total} - B_{base}$ where $B_{base}$ marks the space needed for one buffer slot as well as three pivot slots and their pointers. This lets us define $\varepsilon \in [0;1]$ while leaving the B$^\varepsilon$-Tree operational.
+
+

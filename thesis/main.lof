@@ -1,0 +1,25 @@
+\babel@toc {american}{}\relax 
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {2.1}{\ignorespaces LSM-Tree Merges\relax }}{3}{figure.caption.3}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {3.1}{\ignorespaces B$^\varepsilon $-Tree Structure\relax }}{6}{figure.caption.4}%
+\contentsline {figure}{\numberline {3.2}{\ignorespaces A B$^\varepsilon $-Tree point lookup}}{7}{figure.caption.5}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {5.1}{\ignorespaces Implementation Layers and Their Respective Interfaces\relax }}{11}{figure.caption.7}%
+\contentsline {figure}{\numberline {5.2}{\ignorespaces A preemptive node split}}{17}{figure.caption.15}%
+\contentsline {figure}{\numberline {5.3}{\ignorespaces Lock Coupling with a separate root}}{18}{figure.caption.16}%
+\contentsline {figure}{\numberline {5.4}{\ignorespaces The state of two overflowed upsert buffers}}{21}{figure.caption.23}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {6.1}{\ignorespaces 200M Operations on 200M Preloaded Values\relax }}{26}{figure.caption.28}%
+\contentsline {figure}{\numberline {6.2}{\ignorespaces 200M Operations on 200M Preloaded Values: Metadata\relax }}{27}{figure.caption.29}%
+\contentsline {figure}{\numberline {6.3}{\ignorespaces 200M Operations: B$^\varepsilon $-Tree ($\varepsilon =0.8$) / B$^+$-Tree\relax }}{31}{figure.caption.30}%
+\contentsline {figure}{\numberline {6.4}{\ignorespaces 200M Operations In-Memory: B$^\varepsilon $-Tree ($\varepsilon =0.8$, 2Q) / B$^+$-Tree (2Q) / RocksDB / LevelDB\relax }}{34}{figure.caption.32}%
+\contentsline {figure}{\numberline {6.5}{\ignorespaces 200M Operations with 10GB of Memory: B$^\varepsilon $-Tree ($\varepsilon =0.8$, 2Q) / B$^+$-Tree (2Q) / RocksDB / LevelDB\relax }}{35}{figure.caption.33}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\providecommand \tocbasic@end@toc@file {}\tocbasic@end@toc@file 

@@ -1,0 +1,38 @@
+% !TeX root = ../main.tex
+% Add the above to each chapter to make compiling the PDF easier in some editors.
+
+\chapter{Future Work}\label{chapter:future_work}
+
+While chapter \ref{chapter:evaluation} provided insight into the performance behavior of our B$^\varepsilon$-Tree, additional evaluations could clarify its behavior even more. Apart from switching workloads as well as altering page sizes, key sizes, and value sizes, especially testing with different node sizes would let us investigate the impact of the trade-off between random and sequential I/O operations.\newline
+Generally, B$^\varepsilon$-Trees should benefit from larger node sizes which amortize the costs of the random seek away \cite{b_epsilon_tree}. However, the question remains whether this would benefit the combination of multiple threads and the current lock-based node protection approach. With increased node sizes, each worker thread has to lock a larger part of the index for its operations, potentially impacting scaling performance.
+
+Apart from further benchmarks, the following modification ideas may improve performance, both in-memory and with memory limitations, and broaden applications.
+
+\section{Optimistic Lock Coupling}
+
+Our B$^\varepsilon$-Tree design performs write-only workloads faster than our B$^+$-Tree and is only slightly slower when processing read-only workloads (see section \ref{6.3}). Mixed workloads, however, cause the performance to drop due to the lock-based protection of the pages.
+
+A general-purpose method that increases scalability for tree structures with similar lock granularity is Optimistic Lock Coupling (OLC) \cite{optimistic_lock_coupling}. Instead of a \texttt{std::shared\_mutex}, Optimistic Locks protect node writes with a \texttt{std::mutex}. Reader threads concurrently access their respective nodes optimistically by verifying an atomic version counter after reading from a node. When the version changes during the read, the thread restarts its operations. OLC benefits from the fact that, while writer threads have to lock their nodes exclusively to be able to handle the worst case of splitting, these splits happen rarely. Consequently, readers do not have to wait for the writers to finish as with traditional lock coupling with a \texttt{std::shared\_mutex} but can access the nodes simultaneously most of the time. Additionally, the overhead of thread contentions on single mutexes occurs less often.
+
+Since our B$^\varepsilon$-Tree suffers from these conflicts, which OLC solves in traditional tree structures, applying OLC could result in increased performance when processing mixed workloads with multiple threads. However, in contrast to a B$^+$-Tree, each exclusive node access results in a modification of the upsert buffer. Therefore, a reader thread would have to restart more often since the modifications generally happen in the higher levels of the B$^\varepsilon$-Tree. While this could be encountered by creating a node-specific index for the upsert buffers, like the original paper suggests \cite{b_epsilon_tree}, and a more granular lock structure, the question remains whether the B$^\varepsilon$-Tree design would benefit from OLC as much as, for example, B$^+$-Trees do. 
+
+\section{Dynamic Values for $\varepsilon$}
+
+The benchmarks also showed that different values of $\varepsilon$ resulted in different performances for read-only and insert-only workloads. Thus, if the general distribution of reads and writes  $\varepsilon$ is known at runtime, $\varepsilon$ could be chosen dynamically to improve the respective throughput. Alternatively, the trade-off between pivot slots and buffer slots could be changed at runtime to minimize splits and flushes, similar to the reference implementation of the original paper \cite{reference_b_epsilon_tree}.
+
+\section{Parallel Flushes}
+
+Flushing upserts sometimes requires a single thread to lock and operate on multiple nodes of the same level, as outlined in section \ref{5.2.3}. Because of the level order traversal, the calls to \texttt{traverse\_tree} for these nodes can happen independently of the others. We could perform these flushes in parallel by spawning a new thread or leaving exclusive access of a node to an existing waiting thread. 
+
+\section{Durability}
+
+The current B$^\varepsilon$-Tree design is not durable, i.e., crashes may cause data loss. Even if the page data would be protected from this by, for example, the page buffer, our level-order traversal requires the worker threads to temporarily store upserts in memory, which are not protected during the flush. To encounter this, the threads could use a separate write-ahead log (WAL) which also stores temporary copies of the upserts. After a crash, the B$^\varepsilon$-Tree could use the WAL to restore the state of each thread and rebuild the upsert buffers. 
+
+\section{Advanced Buffer Manager}
+
+As described in section \ref{6.4}, the lock-protected page table represents the main bottleneck of our buffered B$^\varepsilon$-Tree. In fact, traditional buffer managers often are the main reason for scaling problems since pages are typically organized similarly \cite{buffer_managers,hashtable_buffer_slow}.
+
+In order to increase multithreaded throughput, we could make use of buffer managers like LeanStore \cite{leanstore}. LeanStore uses pointer swizzling and thus enables the worker threads to directly map the identifiers of loaded pages to the respective location in memory without additional lookups. This could improve the performance of our trees in the third benchmark section, and we could compare the behavior of RocksDB and our B$^\varepsilon$-Tree more accurately.
+
+
+

@@ -1,0 +1,232 @@
+% !TeX root = ../main.tex
+% Add the above to each chapter to make compiling the PDF easier in some editors.
+
+\chapter{B$^\varepsilon$-Trees}\label{chapter:be-tree}
+
+\section{General Structure} \label{section:3.1}
+
+B$^+$-Trees usually consist of two types of nodes: inner nodes and leaves. The inner nodes contain pivot keys and pointers to the corresponding child nodes, while the leaves store the key-value pairs (or corresponding pointers). Subsequent updates and deletes are then directly performed on these pairs. Consequently, each thread must reach its respective target leaf node once for every insert, update and delete operation.\newline
+A B$^\varepsilon$-Tree instead encodes every write operation as an "upsert" message. Each upsert message $U$ consists of the operation type $O_U$, a key $K_U$ and its associated value $V_U$ (for inserts and updates). Furthermore, it contains a timestamp $T_U$ that marks the time the operation was initially requested. Therefore, operations are treated as data and do not have to be performed immediately. \cite{b_epsilon_tree}
+
+In contrast to a B$^+$-Tree, B$^\varepsilon$-Trees split the space of the inner nodes and additionally store a buffer for the upsert messages next to the pivot keys and their child pointers (see figure \ref{fig:b_epsilon_tree_structure}). Write operations are temporarily stored in these buffers and then flushed to the buffers of inner nodes in lower levels or the leaf nodes. The leaf nodes are structured similarly to the leaves of a B$^+$-Tree and merely contain tuples representing each key's last flushed state and its associated value.
+
+\newcommand\Textbox[2]{%
+	\parbox[c][#1][c]{2.3cm}{\centering#2}}
+\begin{figure}[h]
+	\centering
+	\scalebox{0.9}{
+		\begin{tikzpicture}[
+			inner_node/.style={
+				rectangle split,
+				rectangle split horizontal=false,
+				draw=black,
+				rectangle split ignore empty parts,
+				rectangle split part align={left},
+				text centered
+			},
+			inner/.style={
+				rectangle split horizontal,
+				draw=black,
+				rectangle split ignore empty parts,
+				rectangle split part align={center,base},
+				rectangle split parts=20,
+				text centered
+			},
+			dotted_node/.style={
+				rectangle,
+				draw=none, 
+				text centered,
+				align=center,
+				text width=2cm, 
+				text height=0.5cm, 
+				text depth=0.5cm
+			},
+			edge from parent/.style={->, draw}
+			]
+			
+			\node[inner_node] (ROOT) {
+				\begin{tikzpicture}
+					\node[inner, label=right:$B-B^\varepsilon$] (BUFFER) {
+						\Textbox{1cm}{upsert buffer}
+					};
+					
+				\end{tikzpicture}
+				\nodepart{two} \begin{tikzpicture}
+					\node[inner, label={[label distance=1.5mm]right:$B^\varepsilon$}] (ROOT_pivots)
+					{$P_1$\nodepart{two}$P_2$\nodepart{three}$P_3$\nodepart{four}$P_4$\nodepart{five}...};
+				\end{tikzpicture}
+			};
+			
+			\node[inner_node, below=of ROOT] (L_1_CENTER) {
+				\begin{tikzpicture}
+					\node[inner, label=right:$B-B^\varepsilon$] (BUFFER) {
+						\Textbox{1cm}{upsert buffer}
+					};
+					
+				\end{tikzpicture}
+				\nodepart{two} \begin{tikzpicture}
+					\node[inner, label={[label distance=1.5mm]right:$B^\varepsilon$}] (ROOT_pivots)
+					{$P_1$\nodepart{two}$P_2$\nodepart{three}$P_3$\nodepart{four}$P_4$\nodepart{five}...};
+				\end{tikzpicture}
+			};
+			
+			\node[dotted_node, left=of L_1_CENTER] (L_1_2){
+				...
+			};
+			
+			\node[dotted_node, right=of L_1_CENTER] (L_1_3){
+				...
+			};
+			
+			\node[dotted_node, below=of L_1_CENTER] (L_2_CENTER){
+				...
+			};
+			
+			\node[dotted_node, left=of L_2_CENTER] (L_2_1){
+				...
+			};
+			
+			\node[dotted_node, right=of L_2_CENTER] (L_2_2){
+				...
+			};
+			
+			\node[inner_node, below=of L_2_CENTER] (LEAF_CENTER) {
+				\begin{tikzpicture}
+					\node[inner, label={[label distance=1.5mm]right:$B$}] (ROOT_pivots)
+					{$(K_1,V_{K_1})$\nodepart{two}$(K_2,V_{K_2})$\nodepart{three}$(K_3,V_{K_3})$\nodepart{four}$(K_4,V_{K_4})$\nodepart{five}$(K_5,V_{K_5})$\nodepart{six}$(K_6,V_{K_6})$\nodepart{seven}$(K_7,V_{K_7})$\nodepart{eight}$(K_8,V_{K_8})$\nodepart{nine}...};
+				\end{tikzpicture}
+			};
+			
+			\path [->] (ROOT) edge [below] (L_1_2);
+			\path [->] (ROOT) edge [below] (L_1_CENTER);
+			\path [->] (ROOT) edge [below] (L_1_3);
+			
+			\path [->] (L_1_CENTER) edge [below] (L_2_1);
+			\path [->] (L_1_CENTER) edge [below] (L_2_CENTER);
+			\path [->] (L_1_CENTER) edge [below] (L_2_2);
+			
+			\path [->] (L_2_CENTER) edge [below] (LEAF_CENTER);
+			
+		\end{tikzpicture}
+	}
+	\caption{B$^\varepsilon$-Tree Structure}
+	\label{fig:b_epsilon_tree_structure}
+\end{figure}
+
+Each inner node of $B$ bytes uses $B^\varepsilon$ bytes for the pivot elements and pointers and $B^\varepsilon-B$ bytes for the allocation of its upsert buffer ($\varepsilon \in [0;1]$). The value of $\varepsilon$ thus describes the trade-off between a buffered binary tree (also called a "buffered repository tree" \cite{buffered_repository_tree}) at $\varepsilon \approx 0$ and buffering no operations at all, similarly to a B$^+$-Tree, at $\varepsilon \approx 1$.
+
+\section{Write Operations}
+To insert, update or delete a value, we first encode the operation as a new upsert and pass it to the root node. If the tree consists of one level, the root node is a leaf node, and the operation represented by the upsert will be executed. Otherwise, we do not differentiate between the different message types and append the upsert to the buffer and return.
+
+When the root buffer reaches its total capacity, we scan the buffer and select the child node with the most upserts addressed to it. We then flush these upserts collectively to the respective node. This happens recursively if the buffers in the lower levels also do not have enough space, sometimes flushing to more than one child node. Again, after an upsert reaches its target leaf, the encoded operation will be executed. Delete operations are encoded as upsert messages called "tombstone messages" \cite{b_epsilon_tree}, marking a key-value pair as removed. Nevertheless, because the upsert does not reach the leaf level immediately, the tombstone message and the underlying pair may temporarily co-exist.\newline
+Consequently, B$^\varepsilon$-Trees accumulate multiple write operations and split the cost of traveling down amongst them. This also means that write operations do not return an immediate response, regardless of the success of their execution. For example, without a subsequent lookup or a separate callback, a worker thread can not identify whether its update request will find an existing value or not.
+
+Note that, because of the buffered operations, a B$^\varepsilon$-Tree does not contain the current state of every value on the leaf level. Thus, when a B$^\varepsilon$-Tree is used as a secondary index structure, we have to either save its inner nodes and the underlying pairs or flush down all buffered upserts.
+
+\section{Lookups}
+In contrast to a B$^+$-Tree, the B$^\varepsilon$-Tree contains information about the change of values in its inner nodes in the form of upserts. Therefore, to get the current state of a value $V_K$ associated with a key $K$, a worker thread has to scan each buffer on its way down for upserts addressed to $K$. It then has to accumulate these upserts until it finds a base state, either an insert or a tombstone message, or the value on the leaf level. After that, it can reconstruct the current state of $V_K$ by applying the upserts according to the order of their timestamps on the base state. Consequently, lookup operations do not modify the buffer content in any way - instead of flushing down the upserts addressed to $K$, they create their own copy in place. Figure \ref{fig:b_epsilon_tree_lookups} illustrates the procedure of a point lookup in a B$^\varepsilon$-Tree.
+
+\begin{figure}[h]
+	\vspace*{4mm}
+	\centering
+	\scalebox{0.9}{
+		\begin{tikzpicture}[
+			inner_node/.style={
+				rectangle split,
+				rectangle split horizontal=false,
+				draw=black,
+				rectangle split ignore empty parts,
+				rectangle split part align={center,base},
+				text centered
+			},
+			inner/.style={
+				rectangle split horizontal,
+				draw=black,
+				rectangle split ignore empty parts,
+				rectangle split part align={center,base},
+				rectangle split parts=20,
+				text centered
+			},
+			dotted_node/.style={
+				rectangle,
+				draw=none, 
+				text centered,
+				align=center,
+				text width=2cm, 
+				text height=0.5cm, 
+				text depth=0.5cm
+			},
+			edge from parent/.style={->, draw}
+			]
+			
+			\node[inner_node] (ROOT) {
+				\begin{tikzpicture}
+					\node[inner, rectangle split part fill={white,red!30,white!30,red!30,red!30,white}] (ROOT_pivots)
+					{...\nodepart{two}$U_3^K$\nodepart{three}...\nodepart{four}$U_4^K$\nodepart{five}$U_5^K$\nodepart{six}...};
+				\end{tikzpicture}
+				\nodepart{two} \begin{tikzpicture}
+					\node[inner] (ROOT_pivots)
+					{$P_1$\nodepart{two}$P_2$\nodepart{three}$P_3$\nodepart{four}$P_4$\nodepart{five}...};
+				\end{tikzpicture}
+			};
+			
+			\node[inner_node, below=of ROOT] (L_1_CENTER) {
+				\begin{tikzpicture}
+					\node[inner, rectangle split part fill={white,red!30,white,red!30,white}] (ROOT_pivots)
+					{...\nodepart{two}$U_1^K$\nodepart{three}...\nodepart{four}$U_2^K$\nodepart{five}...};
+				\end{tikzpicture}
+				\nodepart{two} \begin{tikzpicture}
+					\node[inner] (ROOT_pivots)
+					{$P_1$\nodepart{two}$P_2$\nodepart{three}$P_3$\nodepart{four}$P_4$\nodepart{five}...};
+				\end{tikzpicture}
+			};
+			
+			\node[dotted_node, left=of L_1_CENTER] (L_1_2){
+				...
+			};
+			
+			\node[dotted_node, right=of L_1_CENTER] (L_1_3){
+				...
+			};
+			
+			\node[dotted_node, below=of L_1_CENTER] (L_2_CENTER){
+				...
+			};
+			
+			\node[dotted_node, left=of L_2_CENTER] (L_2_1){
+				...
+			};
+			
+			\node[dotted_node, right=of L_2_CENTER] (L_2_2){
+				...
+			};
+			
+			\node[inner_node, below=of L_2_CENTER] (LEAF_CENTER) {
+				\begin{tikzpicture}
+					\node[inner, rectangle split part fill={white,red!30,white}] (ROOT_pivots)
+					{...\nodepart{two}$(K,V_K)$\nodepart{three}...};
+				\end{tikzpicture}
+			};
+			
+			\path [->] (ROOT) edge [below] (L_1_2);
+			\path [->, draw=red] (ROOT) edge [below] (L_1_CENTER);
+			\path [->] (ROOT) edge [below] (L_1_3);
+			
+			\path [->] (L_1_CENTER) edge [below] (L_2_1);
+			\path [->, draw=red] (L_1_CENTER) edge [below] (L_2_CENTER);
+			\path [->] (L_1_CENTER) edge [below] (L_2_2);
+			
+			\path [->, draw=red] (L_2_CENTER) edge [below] (LEAF_CENTER);
+			
+			\draw[->, color=red] (-5,1) -- (-5,-7.5) node[sloped,midway,below] {lookup};
+			\draw[->, color=darkgray] (5,-7.5) -- (5,1) node[sloped,midway,above,rotate=180] {state reconstruction};
+			
+		\end{tikzpicture}
+	}
+	\caption[A B$^\varepsilon$-Tree point lookup]{A B$^\varepsilon$-Tree point lookup. The current value $V_K$ associated with key $K$ is reconstructed by applying all corresponding upserts in reverse order to the value stored in the respective leaf node:\newline $V_K^{current} = V_K \leftarrow U_1^K \leftarrow U_2^K \leftarrow U_3^K \leftarrow U_4^K \leftarrow U_5^K$}
+	\label{fig:b_epsilon_tree_lookups}
+\end{figure}
+
+Range queries for a key range ${K_1, K_2, ..., K_N}$ behave similarly as each value depends on potential buffered upserts. Thus, to get every final value ${V_{K_1}, V_{K_2}, ..., V_{K_N}}$, we first have to scan every upsert buffer in the subtree of ${K_1, K_2, ..., K_N}$.
+
+% IMAGE https://imgur.com/a/7JHLR6u

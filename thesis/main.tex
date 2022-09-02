@@ -1,0 +1,55 @@
+\RequirePackage[l2tabu,orthodox]{nag}
+
+%\documentclass[headsepline,footsepline,footinclude=false,fontsize=11pt,paper=a4,listof=totoc,bibliography=totoc,BCOR=12mm,DIV=12]{scrbook} % two-sided
+\documentclass[headsepline,footsepline,footinclude=false,oneside,fontsize=11pt,paper=a4,listof=totoc,bibliography=totoc]{scrbook} % one-sided
+
+\input{settings}
+
+\newcommand*{\getUniversity}{Technische Universität München}
+\newcommand*{\getFaculty}{Department of Informatics}
+\newcommand*{\getTitle}{Optimizing Write-Heavy Database Operations Using B$^\varepsilon$-Trees}
+\newcommand*{\getTitleGer}{Optimierung von schreibintensiven Datenbankoperationen mit B$^\varepsilon$-Bäumen}
+\newcommand*{\getAuthor}{Christoph Rotte}
+\newcommand*{\getDoctype}{Bachelor's Thesis in Informatics}
+\newcommand*{\getSupervisor}{Prof. Dr. Thomas Neumann}
+\newcommand*{\getAdvisor}{Philipp Fent, M.Sc.}
+\newcommand*{\getSubmissionDate}{15.08.2022}
+\newcommand*{\getSubmissionLocation}{Munich}
+
+\begin{document}
+	\counterwithin{listing}{chapter}
+	
+	% Set page numbering to avoid "destination with the same identifier has been already used" warning for cover page.
+	% (see https://en.wikibooks.org/wiki/LaTeX/Hyperlinks#Problems_with_Links_and_Pages).
+	\pagenumbering{alph}
+	\input{pages/cover}
+	
+	\frontmatter{}
+	
+	\input{pages/title}
+	\input{pages/disclaimer}
+	%\input{pages/acknowledgments}
+	\input{pages/abstract}
+	\microtypesetup{protrusion=false}
+	\tableofcontents{}
+	\microtypesetup{protrusion=true}
+	
+	\mainmatter{}
+	
+	\foreach \i in {01, 02, 03, 04, 05, 06, 07, 08, 09} {%
+		\edef\FileName{chapters/\i}%
+		\IfFileExists{\FileName}{%
+			\input{\FileName}%
+		}
+	}
+	
+	\appendix{}
+	
+	\microtypesetup{protrusion=false}
+	\listoffigures{}
+	\listoflistings{}
+	\listoftables{}
+	\microtypesetup{protrusion=true}
+	\printbibliography{}
+	
+\end{document}

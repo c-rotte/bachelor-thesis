@@ -1,0 +1,20 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{template}\PYG{o}{\PYGZlt{}}\PYG{k}{class}\PYG{+w}{ }\PYG{n+nc}{K}\PYG{p}{,}\PYG{+w}{ }\PYG{k}{class}\PYG{+w}{ }\PYG{n+nc}{V}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{k+kt}{size\PYGZus{}t}\PYG{+w}{ }\PYG{n}{B}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{short}\PYG{+w}{ }\PYG{n}{EPSILON}\PYG{o}{\PYGZgt{}}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n}{BeTree}\PYG{o}{\PYGZlt{}}\PYG{n}{K}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{V}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{B}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{EPSILON}\PYG{o}{\PYGZgt{}::}\PYG{n}{upsert}\PYG{p}{(}\PYG{n}{Upsert}\PYG{o}{\PYGZlt{}}\PYG{n}{K}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{V}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{upsert}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{n}{rootLeaf}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{header}\PYG{p}{.}\PYG{n}{treeHeight}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{PageT}\PYG{o}{*}\PYG{+w}{ }\PYG{n}{rootPage}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{pageBuffer}\PYG{p}{.}\PYG{n}{pinPage}\PYG{p}{(}\PYG{n}{header}\PYG{p}{.}\PYG{n}{rootID}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{rootLeaf}\PYG{p}{);}
+\PYG{+w}{    }\PYG{c+c1}{// first case: leaf node (direct operation)}
+\PYG{+w}{    }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{accessNode}\PYG{p}{(}\PYG{o}{*}\PYG{n}{rootPage}\PYG{p}{).}\PYG{n}{nodeType}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{n}{NodeType}\PYG{o}{::}\PYG{n}{LEAF}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{        }\PYG{n}{handleLeafUpsert}\PYG{p}{(}\PYG{n}{std}\PYG{o}{::}\PYG{n}{move}\PYG{p}{(}\PYG{n}{upsert}\PYG{p}{),}\PYG{+w}{ }\PYG{n}{rootPage}\PYG{p}{);}
+\PYG{+w}{        }\PYG{k}{return}\PYG{p}{;}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{    }\PYG{c+c1}{// second case: root node \PYGZhy{}\PYGZgt{} first, try shared locking}
+\PYG{+w}{    }\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{n}{success}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{handleRootUpsert}\PYG{p}{(}\PYG{n}{upsert}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{rootPage}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{false}\PYG{p}{);}
+\PYG{+w}{    }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{o}{!}\PYG{n}{success}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{        }\PYG{c+c1}{// overflow detected \PYGZhy{}\PYGZgt{} retry using exclusive locking}
+\PYG{+w}{        }\PYG{c+c1}{// (handleRootRootUpsert already unpinned the root page)}
+\PYG{+w}{        }\PYG{n}{rootPage}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{n}{pageBuffer}\PYG{p}{.}\PYG{n}{pinPage}\PYG{p}{(}\PYG{n}{header}\PYG{p}{.}\PYG{n}{rootID}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{true}\PYG{p}{);}
+\PYG{+w}{        }\PYG{n}{handleRootUpsert}\PYG{p}{(}\PYG{n}{std}\PYG{o}{::}\PYG{n}{move}\PYG{p}{(}\PYG{n}{upsert}\PYG{p}{),}\PYG{+w}{ }\PYG{n}{rootPage}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{true}\PYG{p}{);}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

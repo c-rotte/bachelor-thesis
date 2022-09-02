@@ -1,0 +1,1898 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.2 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{nty/global//global/global}
+    \entry{dam}{article}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=a98840548c377d7debcd7f79162c75b8}{%
+           family={Aggarwal},
+           familyi={A\bibinitperiod},
+           given={Alok},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=5ff7ae31b9ba2617c065ff69c8389697}{%
+           family={Vitter},
+           familyi={V\bibinitperiod},
+           given={S.},
+           giveni={S\bibinitperiod},
+           givenun=0,
+           suffix={Jeffrey},
+           suffixi={J\bibinitperiod},
+           suffixun=0}}%
+      }
+      \list{location}{1}{%
+        {New York, NY, USA}%
+      }
+      \list{publisher}{1}{%
+        {Association for Computing Machinery}%
+      }
+      \strng{namehash}{3d49e2f1c91a23a24c274125e88c2ef4}
+      \strng{fullhash}{3d49e2f1c91a23a24c274125e88c2ef4}
+      \strng{bibnamehash}{3d49e2f1c91a23a24c274125e88c2ef4}
+      \strng{authorbibnamehash}{3d49e2f1c91a23a24c274125e88c2ef4}
+      \strng{authornamehash}{3d49e2f1c91a23a24c274125e88c2ef4}
+      \strng{authorfullhash}{3d49e2f1c91a23a24c274125e88c2ef4}
+      \field{sortinit}{A}
+      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{issn}{0001-0782}
+      \field{journaltitle}{Commun. ACM}
+      \field{month}{9}
+      \field{number}{9}
+      \field{title}{The Input/Output Complexity of Sorting and Related Problems}
+      \field{volume}{31}
+      \field{year}{1988}
+      \field{pages}{1116\bibrangedash 1127}
+      \range{pages}{12}
+      \verb{doi}
+      \verb 10.1145/48529.48535
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1145/48529.48535
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1145/48529.48535
+      \endverb
+    \endentry
+    \entry{b_epsilon_tree}{article}{}
+      \name{author}{8}{}{%
+        {{un=0,uniquepart=base,hash=73b35b4e99fa82d2e693c149ec5d1d17}{%
+           family={Bender},
+           familyi={B\bibinitperiod},
+           given={Michael\bibnamedelima A.},
+           giveni={M\bibinitperiod\bibinitdelim A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=58fd7d5e0555331a2b10176e0e8eb0c6}{%
+           family={Farach{-}Colton},
+           familyi={F\bibinitperiod},
+           given={Martin},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=9cdea1c9755b59721627751bfd30e50b}{%
+           family={Jannen},
+           familyi={J\bibinitperiod},
+           given={William},
+           giveni={W\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=e4f16441e3859580a81b43a585d9a8ae}{%
+           family={Johnson},
+           familyi={J\bibinitperiod},
+           given={Rob},
+           giveni={R\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=9b78801b62b0c1adb96fc9f93451db20}{%
+           family={Kuszmaul},
+           familyi={K\bibinitperiod},
+           given={Bradley\bibnamedelima C.},
+           giveni={B\bibinitperiod\bibinitdelim C\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=ae1c84fffc31fe4b93093a29dc4e668b}{%
+           family={Porter},
+           familyi={P\bibinitperiod},
+           given={Donald\bibnamedelima E.},
+           giveni={D\bibinitperiod\bibinitdelim E\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=f73b33469a1dfec84c9b827437d90314}{%
+           family={Yuan},
+           familyi={Y\bibinitperiod},
+           given={Jun},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=de1ff81b8f7c4ae6a58e6dad1471ac3b}{%
+           family={Zhan},
+           familyi={Z\bibinitperiod},
+           given={Yang},
+           giveni={Y\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{0f0e5573b802001c2e82b7de8f82be3b}
+      \strng{fullhash}{5dfd3329d73563cbc404dc4de3e0422f}
+      \strng{bibnamehash}{5dfd3329d73563cbc404dc4de3e0422f}
+      \strng{authorbibnamehash}{5dfd3329d73563cbc404dc4de3e0422f}
+      \strng{authornamehash}{0f0e5573b802001c2e82b7de8f82be3b}
+      \strng{authorfullhash}{5dfd3329d73563cbc404dc4de3e0422f}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{login Usenix Mag.}
+      \field{number}{5}
+      \field{title}{An Introduction to B{\(\epsilon\)}-trees and Write-Optimization}
+      \field{volume}{40}
+      \field{year}{2015}
+      \verb{urlraw}
+      \verb https://www.usenix.org/publications/login/oct15/bender
+      \endverb
+      \verb{url}
+      \verb https://www.usenix.org/publications/login/oct15/bender
+      \endverb
+    \endentry
+    \entry{bloom_filter}{article}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=3124dcc7c1c1643c091687ec4b0dcd3e}{%
+           family={Bloom},
+           familyi={B\bibinitperiod},
+           given={Burton\bibnamedelima H.},
+           giveni={B\bibinitperiod\bibinitdelim H\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {New York, NY, USA}%
+      }
+      \list{publisher}{1}{%
+        {Association for Computing Machinery}%
+      }
+      \strng{namehash}{3124dcc7c1c1643c091687ec4b0dcd3e}
+      \strng{fullhash}{3124dcc7c1c1643c091687ec4b0dcd3e}
+      \strng{bibnamehash}{3124dcc7c1c1643c091687ec4b0dcd3e}
+      \strng{authorbibnamehash}{3124dcc7c1c1643c091687ec4b0dcd3e}
+      \strng{authornamehash}{3124dcc7c1c1643c091687ec4b0dcd3e}
+      \strng{authorfullhash}{3124dcc7c1c1643c091687ec4b0dcd3e}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{In this paper trade-offs among certain computational factors in hash coding are analyzed. The paradigm problem considered is that of testing a series of messages one-by-one for membership in a given set of messages. Two new hash-coding methods are examined and compared with a particular conventional hash-coding method. The computational factors considered are the size of the hash area (space), the time required to identify a message as a nonmember of the given set (reject time), and an allowable error frequency.The new methods are intended to reduce the amount of space required to contain the hash-coded information from that associated with conventional methods. The reduction in space is accomplished by exploiting the possibility that a small fraction of errors of commission may be tolerable in some applications, in particular, applications in which a large amount of data is involved and a core resident hash area is consequently not feasible using conventional methods.In such applications, it is envisaged that overall performance could be improved by using a smaller core resident hash area in conjunction with the new methods and, when necessary, by using some secondary and perhaps time-consuming test to “catch” the small fraction of errors associated with the new methods. An example is discussed which illustrates possible areas of application for the new methods.Analysis of the paradigm problem demonstrates that allowing a small number of test messages to be falsely identified as members of the given set will permit a much smaller hash area to be used without increasing reject time.}
+      \field{issn}{0001-0782}
+      \field{journaltitle}{Commun. ACM}
+      \field{month}{7}
+      \field{number}{7}
+      \field{title}{Space/Time Trade-Offs in Hash Coding with Allowable Errors}
+      \field{volume}{13}
+      \field{year}{1970}
+      \field{pages}{422\bibrangedash 426}
+      \range{pages}{5}
+      \verb{doi}
+      \verb 10.1145/362686.362692
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1145/362686.362692
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1145/362686.362692
+      \endverb
+      \keyw{hash coding,storage layout,scatter storage,retrieval efficiency,storage efficiency,retrieval trade-offs,hash addressing,searching}
+    \endentry
+    \entry{buffered_repository_tree}{inproceedings}{}
+      \name{author}{4}{}{%
+        {{un=0,uniquepart=base,hash=f499af1eb7b443821b33078d5a8e7cb5}{%
+           family={Buchsbaum},
+           familyi={B\bibinitperiod},
+           given={Adam\bibnamedelima L.},
+           giveni={A\bibinitperiod\bibinitdelim L\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=ef74407a400fab46940c4b2b086ee867}{%
+           family={Goldwasser},
+           familyi={G\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=aaeb9142f2e1590450061f637edb6845}{%
+           family={Venkatasubramanian},
+           familyi={V\bibinitperiod},
+           given={Suresh},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=8590656e9ab4a908620c0d8896b2ff90}{%
+           family={Westbrook},
+           familyi={W\bibinitperiod},
+           given={Jeffery\bibnamedelima R.},
+           giveni={J\bibinitperiod\bibinitdelim R\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {ACM-SIAM}%
+      }
+      \strng{namehash}{d94c39de82b6353f72fe475065c8f9d4}
+      \strng{fullhash}{d94c39de82b6353f72fe475065c8f9d4}
+      \strng{bibnamehash}{d94c39de82b6353f72fe475065c8f9d4}
+      \strng{authorbibnamehash}{d94c39de82b6353f72fe475065c8f9d4}
+      \strng{authornamehash}{d94c39de82b6353f72fe475065c8f9d4}
+      \strng{authorfullhash}{d94c39de82b6353f72fe475065c8f9d4}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{IN PROC. ACM-SIAM SYMP. ON DISCRETE ALGORITHMS}
+      \field{title}{On External Memory Graph Traversal}
+      \field{year}{2000}
+      \field{pages}{859\bibrangedash 860}
+      \range{pages}{2}
+    \endentry
+    \entry{tokudb_vs_rocksdb}{inproceedings}{}
+      \name{author}{3}{}{%
+        {{un=1,uniquepart=given,hash=da31f56113cb61a1fef7cf7543eefff8}{%
+           family={Chen},
+           familyi={C\bibinitperiod},
+           given={Chen},
+           giveni={C\bibinitperiod},
+           givenun=1}}%
+        {{un=0,uniquepart=base,hash=09196ed1ecb39e2a4dfc01380e83e053}{%
+           family={Zhong},
+           familyi={Z\bibinitperiod},
+           given={Wenshao},
+           giveni={W\bibinitperiod},
+           givenun=0}}%
+        {{un=1,uniquepart=given,hash=be23b92250dd30d28cf8579a89656d42}{%
+           family={Wu},
+           familyi={W\bibinitperiod},
+           given={Xingbo},
+           giveni={X\bibinitperiod},
+           givenun=1}}%
+      }
+      \list{location}{1}{%
+        {Rennes, France}%
+      }
+      \list{publisher}{1}{%
+        {Association for Computing Machinery}%
+      }
+      \strng{namehash}{2e7e99abd0a58439d212370816a0dc12}
+      \strng{fullhash}{2e7e99abd0a58439d212370816a0dc12}
+      \strng{bibnamehash}{2e7e99abd0a58439d212370816a0dc12}
+      \strng{authorbibnamehash}{2e7e99abd0a58439d212370816a0dc12}
+      \strng{authornamehash}{2e7e99abd0a58439d212370816a0dc12}
+      \strng{authorfullhash}{2e7e99abd0a58439d212370816a0dc12}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the Seventeenth European Conference on Computer Systems}
+      \field{isbn}{9781450391627}
+      \field{series}{EuroSys '22}
+      \field{title}{Building an Efficient Key-Value Store in a Flexible Address Space}
+      \field{year}{2022}
+      \field{pages}{51\bibrangedash 68}
+      \range{pages}{18}
+      \verb{doi}
+      \verb 10.1145/3492321.3519555
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1145/3492321.3519555
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1145/3492321.3519555
+      \endverb
+      \keyw{key-value store,storage,address space}
+    \endentry
+    \entry{ycsb}{inproceedings}{}
+      \name{author}{5}{}{%
+        {{un=0,uniquepart=base,hash=d040757a2d2e32ba40396d1c5431a13a}{%
+           family={Cooper},
+           familyi={C\bibinitperiod},
+           given={Brian\bibnamedelima F.},
+           giveni={B\bibinitperiod\bibinitdelim F\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=1dfd994c1bc4c86239476a1d17f0db35}{%
+           family={Silberstein},
+           familyi={S\bibinitperiod},
+           given={Adam},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=a7cdf6505530ddcff8eb8105414a5043}{%
+           family={Tam},
+           familyi={T\bibinitperiod},
+           given={Erwin},
+           giveni={E\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=5fd2a1e92f74585d94de45092d5794a5}{%
+           family={Ramakrishnan},
+           familyi={R\bibinitperiod},
+           given={Raghu},
+           giveni={R\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=9ea51ac455d9d2a325a9f22e91e275ac}{%
+           family={Sears},
+           familyi={S\bibinitperiod},
+           given={Russell},
+           giveni={R\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {Indianapolis, Indiana, USA}%
+      }
+      \list{publisher}{1}{%
+        {Association for Computing Machinery}%
+      }
+      \strng{namehash}{bc2ac63d00df46a4f52375c85edb5eee}
+      \strng{fullhash}{f0c3c0962d5580d626e784b378841a18}
+      \strng{bibnamehash}{f0c3c0962d5580d626e784b378841a18}
+      \strng{authorbibnamehash}{f0c3c0962d5580d626e784b378841a18}
+      \strng{authornamehash}{bc2ac63d00df46a4f52375c85edb5eee}
+      \strng{authorfullhash}{f0c3c0962d5580d626e784b378841a18}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{While the use of MapReduce systems (such as Hadoop) for large scale data analysis has been widely recognized and studied, we have recently seen an explosion in the number of systems developed for cloud data serving. These newer systems address "cloud OLTP" applications, though they typically do not support ACID transactions. Examples of systems proposed for cloud serving use include BigTable, PNUTS, Cassandra, HBase, Azure, CouchDB, SimpleDB, Voldemort, and many others. Further, they are being applied to a diverse range of applications that differ considerably from traditional (e.g., TPC-C like) serving workloads. The number of emerging cloud serving systems and the wide range of proposed applications, coupled with a lack of apples-to-apples performance comparisons, makes it difficult to understand the tradeoffs between systems and the workloads for which they are suited. We present the "Yahoo! Cloud Serving Benchmark" (YCSB) framework, with the goal of facilitating performance comparisons of the new generation of cloud data serving systems. We define a core set of benchmarks and report results for four widely used systems: Cassandra, HBase, Yahoo!'s PNUTS, and a simple sharded MySQL implementation. We also hope to foster the development of additional cloud benchmark suites that represent other classes of applications by making our benchmark tool available via open source. In this regard, a key feature of the YCSB framework/tool is that it is extensible--it supports easy definition of new workloads, in addition to making it easy to benchmark new systems.}
+      \field{booktitle}{Proceedings of the 1st ACM Symposium on Cloud Computing}
+      \field{isbn}{9781450300360}
+      \field{series}{SoCC '10}
+      \field{title}{Benchmarking Cloud Serving Systems with YCSB}
+      \field{year}{2010}
+      \field{pages}{143\bibrangedash 154}
+      \range{pages}{12}
+      \verb{doi}
+      \verb 10.1145/1807128.1807152
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1145/1807128.1807152
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1145/1807128.1807152
+      \endverb
+      \keyw{cloud serving database,benchmarking}
+    \endentry
+    \entry{monkey}{inproceedings}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=164ddac6e339e1e1f941f0ed9e81046c}{%
+           family={Dayan},
+           familyi={D\bibinitperiod},
+           given={Niv},
+           giveni={N\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=e210012f06fe0a0fdb605056191f3b0b}{%
+           family={Athanassoulis},
+           familyi={A\bibinitperiod},
+           given={Manos},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=a0528fbf86972d447525db3b37c0677e}{%
+           family={Idreos},
+           familyi={I\bibinitperiod},
+           given={Stratos},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {Chicago, Illinois, USA}%
+      }
+      \list{publisher}{1}{%
+        {Association for Computing Machinery}%
+      }
+      \strng{namehash}{0ec8723ee3192a629e0f00186ba9ee0a}
+      \strng{fullhash}{0ec8723ee3192a629e0f00186ba9ee0a}
+      \strng{bibnamehash}{0ec8723ee3192a629e0f00186ba9ee0a}
+      \strng{authorbibnamehash}{0ec8723ee3192a629e0f00186ba9ee0a}
+      \strng{authornamehash}{0ec8723ee3192a629e0f00186ba9ee0a}
+      \strng{authorfullhash}{0ec8723ee3192a629e0f00186ba9ee0a}
+      \field{sortinit}{D}
+      \field{sortinithash}{6f385f66841fb5e82009dc833c761848}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the 2017 ACM International Conference on Management of Data}
+      \field{isbn}{9781450341974}
+      \field{series}{SIGMOD '17}
+      \field{title}{Monkey: Optimal Navigable Key-Value Store}
+      \field{year}{2017}
+      \field{pages}{79\bibrangedash 94}
+      \range{pages}{16}
+      \verb{doi}
+      \verb 10.1145/3035918.3064054
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1145/3035918.3064054
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1145/3035918.3064054
+      \endverb
+      \keyw{read/write/memory trade-off,log-structured merge-tree,key-value store,bloom filters,auto-tuning,point queries,point lookups,memory hierarchy,adaptivity,lsm-tree}
+    \endentry
+    \entry{cache-oblivious}{article}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=30a06bf5f3263989d79d20f48ddf828c}{%
+           family={Demaine},
+           familyi={D\bibinitperiod},
+           given={Erik\bibnamedelima D},
+           giveni={E\bibinitperiod\bibinitdelim D\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{30a06bf5f3263989d79d20f48ddf828c}
+      \strng{fullhash}{30a06bf5f3263989d79d20f48ddf828c}
+      \strng{bibnamehash}{30a06bf5f3263989d79d20f48ddf828c}
+      \strng{authorbibnamehash}{30a06bf5f3263989d79d20f48ddf828c}
+      \strng{authornamehash}{30a06bf5f3263989d79d20f48ddf828c}
+      \strng{authorfullhash}{30a06bf5f3263989d79d20f48ddf828c}
+      \field{sortinit}{D}
+      \field{sortinithash}{6f385f66841fb5e82009dc833c761848}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Lecture Notes from the EEF Summer School on Massive Data Sets}
+      \field{number}{4}
+      \field{title}{Cache-oblivious algorithms and data structures}
+      \field{volume}{8}
+      \field{year}{2002}
+      \field{pages}{1\bibrangedash 249}
+      \range{pages}{249}
+    \endentry
+    \entry{lsm_data_stores_leveldb_rocksdb}{article}{}
+      \name{author}{4}{}{%
+        {{un=0,uniquepart=base,hash=156eb3d646c479c2390f82065641b518}{%
+           family={Dong},
+           familyi={D\bibinitperiod},
+           given={Siying},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=d8008f82fffdece80684b38cea0dec4d}{%
+           family={Kryczka},
+           familyi={K\bibinitperiod},
+           given={Andrew},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=a5c7807bda4da2795320505d5ffefe93}{%
+           family={Jin},
+           familyi={J\bibinitperiod},
+           given={Yanqin},
+           giveni={Y\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=0cc180f816815b76057e4e06ff75d112}{%
+           family={Stumm},
+           familyi={S\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {New York, NY, USA}%
+      }
+      \list{publisher}{1}{%
+        {Association for Computing Machinery}%
+      }
+      \strng{namehash}{bce436c3c6687d9d649384027e859cdb}
+      \strng{fullhash}{bce436c3c6687d9d649384027e859cdb}
+      \strng{bibnamehash}{bce436c3c6687d9d649384027e859cdb}
+      \strng{authorbibnamehash}{bce436c3c6687d9d649384027e859cdb}
+      \strng{authornamehash}{bce436c3c6687d9d649384027e859cdb}
+      \strng{authorfullhash}{bce436c3c6687d9d649384027e859cdb}
+      \field{sortinit}{D}
+      \field{sortinithash}{6f385f66841fb5e82009dc833c761848}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{This article is an eight-year retrospective on development priorities for RocksDB, a key-value store developed at Facebook that targets large-scale distributed systems and that is optimized for Solid State Drives (SSDs). We describe how the priorities evolved over time as a result of hardware trends and extensive experiences running RocksDB at scale in production at a number of organizations: from optimizing write amplification, to space amplification, to CPU utilization. We describe lessons from running large-scale applications, including that resource allocation needs to be managed across different RocksDB instances, that data formats need to remain backward- and forward-compatible to allow incremental software rollouts, and that appropriate support for database replication and backups are needed. Lessons from failure handling taught us that data corruption errors needed to be detected earlier and that data integrity protection mechanisms are needed at every layer of the system. We describe improvements to the key-value interface. We describe a number of efforts that in retrospect proved to be misguided. Finally, we describe a number of open problems that could benefit from future research.}
+      \field{issn}{1553-3077}
+      \field{journaltitle}{ACM Trans. Storage}
+      \field{month}{10}
+      \field{number}{4}
+      \field{title}{RocksDB: Evolution of Development Priorities in a Key-Value Store Serving Large-Scale Applications}
+      \field{volume}{17}
+      \field{year}{2021}
+      \verb{doi}
+      \verb 10.1145/3483840
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1145/3483840
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1145/3483840
+      \endverb
+      \keyw{compaction,databases,RocksDB,Key-value stores,SSD,large-scale applications}
+    \endentry
+    \entry{buffer_managers}{article}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=b18aaeef633fec7f3dd2bda40722c062}{%
+           family={Effelsberg},
+           familyi={E\bibinitperiod},
+           given={Wolfgang},
+           giveni={W\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=7400c26a4fe837df7702d00bf58f6f2e}{%
+           family={Haerder},
+           familyi={H\bibinitperiod},
+           given={Theo},
+           giveni={T\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {New York, NY, USA}%
+      }
+      \list{publisher}{1}{%
+        {Association for Computing Machinery}%
+      }
+      \strng{namehash}{e8d076a6b5efbfd1bab5747695529768}
+      \strng{fullhash}{e8d076a6b5efbfd1bab5747695529768}
+      \strng{bibnamehash}{e8d076a6b5efbfd1bab5747695529768}
+      \strng{authorbibnamehash}{e8d076a6b5efbfd1bab5747695529768}
+      \strng{authornamehash}{e8d076a6b5efbfd1bab5747695529768}
+      \strng{authorfullhash}{e8d076a6b5efbfd1bab5747695529768}
+      \field{sortinit}{E}
+      \field{sortinithash}{8da8a182d344d5b9047633dfc0cc9131}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{issn}{0362-5915}
+      \field{journaltitle}{ACM Trans. Database Syst.}
+      \field{month}{12}
+      \field{number}{4}
+      \field{title}{Principles of Database Buffer Management}
+      \field{volume}{9}
+      \field{year}{1984}
+      \field{pages}{560\bibrangedash 595}
+      \range{pages}{36}
+      \verb{doi}
+      \verb 10.1145/1994.2022
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1145/1994.2022
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1145/1994.2022
+      \endverb
+    \endentry
+    \entry{rocksdb}{online}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=d85544fce402c7a2a96a48078edaf203}{%
+           family={Facebook},
+           familyi={F\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {GitHub}%
+      }
+      \strng{namehash}{d85544fce402c7a2a96a48078edaf203}
+      \strng{fullhash}{d85544fce402c7a2a96a48078edaf203}
+      \strng{bibnamehash}{d85544fce402c7a2a96a48078edaf203}
+      \strng{authorbibnamehash}{d85544fce402c7a2a96a48078edaf203}
+      \strng{authornamehash}{d85544fce402c7a2a96a48078edaf203}
+      \strng{authorfullhash}{d85544fce402c7a2a96a48078edaf203}
+      \field{sortinit}{F}
+      \field{sortinithash}{2638baaa20439f1b5a8f80c6c08a13b4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{\url{https://github.com/facebook/rocksdb}}
+      \field{journaltitle}{GitHub repository}
+      \field{title}{RocksDB: A Persistent Key-Value Store for Flash and RAM Storage}
+      \field{urlday}{29}
+      \field{urlmonth}{7}
+      \field{urlyear}{2022}
+      \field{year}{2022}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://github.com/facebook/rocksdb
+      \endverb
+      \verb{url}
+      \verb https://github.com/facebook/rocksdb
+      \endverb
+    \endentry
+    \entry{leveldb}{online}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=8b36e9207c24c76e6719268e49201d94}{%
+           family={Google},
+           familyi={G\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {GitHub}%
+      }
+      \strng{namehash}{8b36e9207c24c76e6719268e49201d94}
+      \strng{fullhash}{8b36e9207c24c76e6719268e49201d94}
+      \strng{bibnamehash}{8b36e9207c24c76e6719268e49201d94}
+      \strng{authorbibnamehash}{8b36e9207c24c76e6719268e49201d94}
+      \strng{authornamehash}{8b36e9207c24c76e6719268e49201d94}
+      \strng{authorfullhash}{8b36e9207c24c76e6719268e49201d94}
+      \field{sortinit}{G}
+      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{\url{https://github.com/google/leveldb}}
+      \field{journaltitle}{GitHub repository}
+      \field{title}{LevelDB is a fast key-value storage library written at Google that provides an ordered mapping from string keys to string values.}
+      \field{urlday}{29}
+      \field{urlmonth}{7}
+      \field{urlyear}{2022}
+      \field{year}{2022}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://github.com/google/leveldb
+      \endverb
+      \verb{url}
+      \verb https://github.com/google/leveldb
+      \endverb
+    \endentry
+    \entry{b_tree_locking}{article}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=5635912fadd35b7cccc50d61503c072e}{%
+           family={Graefe},
+           familyi={G\bibinitperiod},
+           given={Goetz},
+           giveni={G\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {New York, NY, USA}%
+      }
+      \list{publisher}{1}{%
+        {Association for Computing Machinery}%
+      }
+      \strng{namehash}{5635912fadd35b7cccc50d61503c072e}
+      \strng{fullhash}{5635912fadd35b7cccc50d61503c072e}
+      \strng{bibnamehash}{5635912fadd35b7cccc50d61503c072e}
+      \strng{authorbibnamehash}{5635912fadd35b7cccc50d61503c072e}
+      \strng{authornamehash}{5635912fadd35b7cccc50d61503c072e}
+      \strng{authorfullhash}{5635912fadd35b7cccc50d61503c072e}
+      \field{sortinit}{G}
+      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{B-trees have been ubiquitous in database management systems for several decades, and they are used in other storage systems as well. Their basic structure and basic operations are well and widely understood including search, insertion, and deletion. Concurrency control of operations in B-trees, however, is perceived as a difficult subject with many subtleties and special cases. The purpose of this survey is to clarify, simplify, and structure the topic of concurrency control in B-trees by dividing it into two subtopics and exploring each of them in depth.}
+      \field{issn}{0362-5915}
+      \field{journaltitle}{ACM Trans. Database Syst.}
+      \field{month}{7}
+      \field{number}{3}
+      \field{title}{A Survey of B-Tree Locking Techniques}
+      \field{volume}{35}
+      \field{year}{2010}
+      \verb{doi}
+      \verb 10.1145/1806907.1806908
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1145/1806907.1806908
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1145/1806907.1806908
+      \endverb
+    \endentry
+    \entry{percona_tokudb_deprecated}{online}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=e2f987ffbb45ec958adb2daa3c9cbcd2}{%
+           family={Grimmer},
+           familyi={G\bibinitperiod},
+           given={Lenz},
+           giveni={L\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Percona}%
+      }
+      \strng{namehash}{e2f987ffbb45ec958adb2daa3c9cbcd2}
+      \strng{fullhash}{e2f987ffbb45ec958adb2daa3c9cbcd2}
+      \strng{bibnamehash}{e2f987ffbb45ec958adb2daa3c9cbcd2}
+      \strng{authorbibnamehash}{e2f987ffbb45ec958adb2daa3c9cbcd2}
+      \strng{authornamehash}{e2f987ffbb45ec958adb2daa3c9cbcd2}
+      \strng{authorfullhash}{e2f987ffbb45ec958adb2daa3c9cbcd2}
+      \field{sortinit}{G}
+      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Percona}
+      \field{month}{5}
+      \field{title}{Heads-Up: TokuDB Support Changes and Future Removal from Percona Server for MySQL 8.0}
+      \field{urlday}{29}
+      \field{urlmonth}{7}
+      \field{urlyear}{2022}
+      \field{year}{2021}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.percona.com/blog/2021/05/21/tokudb-support-changes-and-future-removal-from-percona-server-for-mysql-8-0
+      \endverb
+      \verb{url}
+      \verb https://www.percona.com/blog/2021/05/21/tokudb-support-changes-and-future-removal-from-percona-server-for-mysql-8-0
+      \endverb
+    \endentry
+    \entry{in-place-updates}{inproceedings}{}
+      \name{author}{4}{}{%
+        {{un=0,uniquepart=base,hash=fcffabca4c0ca8d64668c6670b4f6602}{%
+           family={Hardock},
+           familyi={H\bibinitperiod},
+           given={Sergey},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=4677c4a6c29a74dd02ae9deaa556f240}{%
+           family={Petrov},
+           familyi={P\bibinitperiod},
+           given={Ilia},
+           giveni={I\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=6e0bf42ba4b495c3d059f7b23221d44e}{%
+           family={Gottstein},
+           familyi={G\bibinitperiod},
+           given={Robert},
+           giveni={R\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=02ebb3ea2a921831d0a973ca2b2bd7d1}{%
+           family={Buchmann},
+           familyi={B\bibinitperiod},
+           given={Alejandro},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {Chicago, Illinois, USA}%
+      }
+      \list{publisher}{1}{%
+        {Association for Computing Machinery}%
+      }
+      \strng{namehash}{94724ea14c2ff31d4a57468f782eb6fd}
+      \strng{fullhash}{94724ea14c2ff31d4a57468f782eb6fd}
+      \strng{bibnamehash}{94724ea14c2ff31d4a57468f782eb6fd}
+      \strng{authorbibnamehash}{94724ea14c2ff31d4a57468f782eb6fd}
+      \strng{authornamehash}{94724ea14c2ff31d4a57468f782eb6fd}
+      \strng{authorfullhash}{94724ea14c2ff31d4a57468f782eb6fd}
+      \field{sortinit}{H}
+      \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the 2017 ACM International Conference on Management of Data}
+      \field{isbn}{9781450341974}
+      \field{series}{SIGMOD '17}
+      \field{title}{From In-Place Updates to In-Place Appends: Revisiting Out-of-Place Updates on Flash}
+      \field{year}{2017}
+      \field{pages}{1571\bibrangedash 1586}
+      \range{pages}{16}
+      \verb{doi}
+      \verb 10.1145/3035918.3035958
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1145/3035918.3035958
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1145/3035918.3035958
+      \endverb
+      \keyw{noftl,write-amplification,write_delta,dbms,page-layout,delta-record,native flash,in-page appends,oltp}
+    \endentry
+    \entry{hashtable_buffer_slow}{inproceedings}{}
+      \name{author}{4}{}{%
+        {{un=0,uniquepart=base,hash=aa7a2165bb118da575a8234a0b8be713}{%
+           family={Harizopoulos},
+           familyi={H\bibinitperiod},
+           given={Stavros},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=4021173586d17fa00db6ea86148c1130}{%
+           family={Abadi},
+           familyi={A\bibinitperiod},
+           given={Daniel\bibnamedelima J.},
+           giveni={D\bibinitperiod\bibinitdelim J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=8b530348ffa5a0cfb0b9827772f501e9}{%
+           family={Madden},
+           familyi={M\bibinitperiod},
+           given={Samuel},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=9a603143e19a2dddd58e683838417ea3}{%
+           family={Stonebraker},
+           familyi={S\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {Vancouver, Canada}%
+      }
+      \list{publisher}{1}{%
+        {Association for Computing Machinery}%
+      }
+      \strng{namehash}{3770cf1c572d29089da9e58943b75284}
+      \strng{fullhash}{3770cf1c572d29089da9e58943b75284}
+      \strng{bibnamehash}{3770cf1c572d29089da9e58943b75284}
+      \strng{authorbibnamehash}{3770cf1c572d29089da9e58943b75284}
+      \strng{authornamehash}{3770cf1c572d29089da9e58943b75284}
+      \strng{authorfullhash}{3770cf1c572d29089da9e58943b75284}
+      \field{sortinit}{H}
+      \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the 2008 ACM SIGMOD International Conference on Management of Data}
+      \field{isbn}{9781605581026}
+      \field{series}{SIGMOD '08}
+      \field{title}{OLTP through the Looking Glass, and What We Found There}
+      \field{year}{2008}
+      \field{pages}{981\bibrangedash 992}
+      \range{pages}{12}
+      \verb{doi}
+      \verb 10.1145/1376616.1376713
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1145/1376616.1376713
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1145/1376616.1376713
+      \endverb
+      \keyw{online transaction processing,dbms architecture,main memory transaction processing,oltp}
+    \endentry
+    \entry{hash_index}{article}{}
+      \name{author}{5}{}{%
+        {{un=0,uniquepart=base,hash=13c56135563ef3702bb41b9c6316a43e}{%
+           family={Hu},
+           familyi={H\bibinitperiod},
+           given={Daokun},
+           giveni={D\bibinitperiod},
+           givenun=0}}%
+        {{un=1,uniquepart=given,hash=9544f4984c8834ebe650f4b93f09cbcc}{%
+           family={Chen},
+           familyi={C\bibinitperiod},
+           given={Zhiwen},
+           giveni={Z\bibinitperiod},
+           givenun=1}}%
+        {{un=1,uniquepart=given,hash=758dd8eb1b71645efca47edc19ef5ddf}{%
+           family={Wu},
+           familyi={W\bibinitperiod},
+           given={Jianbing},
+           giveni={J\bibinitperiod},
+           givenun=1}}%
+        {{un=0,uniquepart=base,hash=a77cedaec268898202f70ecf5667f1c2}{%
+           family={Sun},
+           familyi={S\bibinitperiod},
+           given={Jianhua},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=dd060cd064f8f607eb1bee6712820270}{%
+           family={Chen},
+           familyi={C\bibinitperiod},
+           given={Hao},
+           giveni={H\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {VLDB Endowment}%
+      }
+      \strng{namehash}{3e832ce7482a3ee22ade49fe0ffdc62a}
+      \strng{fullhash}{4400c327d137cbeb063f2282bf901460}
+      \strng{bibnamehash}{4400c327d137cbeb063f2282bf901460}
+      \strng{authorbibnamehash}{4400c327d137cbeb063f2282bf901460}
+      \strng{authornamehash}{3e832ce7482a3ee22ade49fe0ffdc62a}
+      \strng{authorfullhash}{4400c327d137cbeb063f2282bf901460}
+      \field{sortinit}{H}
+      \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Persistent memory (PM) is increasingly being leveraged to build hash-based indexing structures featuring cheap persistence, high performance, and instant recovery, especially with the recent release of Intel Optane DC Persistent Memory Modules. However, most of them are evaluated on DRAM-based emulators with unreal assumptions, or focus on the evaluation of specific metrics with important properties sidestepped. Thus, it is essential to understand how well the proposed hash indexes perform on real PM and how they differentiate from each other if a wider range of performance metrics are considered.To this end, this paper provides a comprehensive evaluation of persistent hash tables. In particular, we focus on the evaluation of six state-of-the-art hash tables including Level hashing, CCEH, Dash, PCLHT, Clevel, and SOFT, with real PM hardware. Our evaluation was conducted using a unified benchmarking framework and representative workloads. Besides characterizing common performance properties, we also explore how hardware configurations (such as PM bandwidth, CPU instructions, and NUMA) affect the performance of PM-based hash tables. With our in-depth analysis, we identify design trade-offs and good paradigms in prior arts, and suggest desirable optimizations and directions for the future development of PM-based hash tables.}
+      \field{issn}{2150-8097}
+      \field{journaltitle}{Proc. VLDB Endow.}
+      \field{month}{1}
+      \field{number}{5}
+      \field{title}{Persistent Memory Hash Indexes: An Experimental Evaluation}
+      \field{volume}{14}
+      \field{year}{2021}
+      \field{pages}{785\bibrangedash 798}
+      \range{pages}{14}
+      \verb{doi}
+      \verb 10.14778/3446095.3446101
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.14778/3446095.3446101
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.14778/3446095.3446101
+      \endverb
+    \endentry
+    \entry{tokudb_vs_rocksdb_2}{online}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=514eee62e55fcdb0ddab910946ec8f2c}{%
+           family={Iyer},
+           familyi={I\bibinitperiod},
+           given={Shiv},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {MinervaDB}%
+      }
+      \strng{namehash}{514eee62e55fcdb0ddab910946ec8f2c}
+      \strng{fullhash}{514eee62e55fcdb0ddab910946ec8f2c}
+      \strng{bibnamehash}{514eee62e55fcdb0ddab910946ec8f2c}
+      \strng{authorbibnamehash}{514eee62e55fcdb0ddab910946ec8f2c}
+      \strng{authornamehash}{514eee62e55fcdb0ddab910946ec8f2c}
+      \strng{authorfullhash}{514eee62e55fcdb0ddab910946ec8f2c}
+      \field{sortinit}{I}
+      \field{sortinithash}{8d291c51ee89b6cd86bf5379f0b151d8}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{MinervaDB}
+      \field{month}{8}
+      \field{title}{Comparing TokuDB, RocksDB and InnoDB Performance on Intel(R) Xeon(R) Gold 6140 CPU}
+      \field{urlday}{29}
+      \field{urlmonth}{7}
+      \field{urlyear}{2022}
+      \field{year}{2018}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://minervadb.com/index.php/2018/08/06/comparing-tokudb-rocksdb-and-innodb-performance-on-intelr-xeonr-gold-6140-cpu/
+      \endverb
+      \verb{url}
+      \verb https://minervadb.com/index.php/2018/08/06/comparing-tokudb-rocksdb-and-innodb-performance-on-intelr-xeonr-gold-6140-cpu/
+      \endverb
+    \endentry
+    \entry{lsm_b_tree}{inproceedings}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=f2bab47b79eba068658d50d0a881e3e3}{%
+           family={Jain},
+           familyi={J\bibinitperiod},
+           given={Varun},
+           giveni={V\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=57d3772155a99f0712cb63ecf56bd032}{%
+           family={Lennon},
+           familyi={L\bibinitperiod},
+           given={James},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=e9267997667fe60caa8f7b804eb7491e}{%
+           family={Gupta},
+           familyi={G\bibinitperiod},
+           given={Harshita},
+           giveni={H\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {Amsterdam, Netherlands}%
+      }
+      \list{publisher}{1}{%
+        {Association for Computing Machinery}%
+      }
+      \strng{namehash}{83ad9e5fef58624269c5ee8c7edfe31c}
+      \strng{fullhash}{83ad9e5fef58624269c5ee8c7edfe31c}
+      \strng{bibnamehash}{83ad9e5fef58624269c5ee8c7edfe31c}
+      \strng{authorbibnamehash}{83ad9e5fef58624269c5ee8c7edfe31c}
+      \strng{authornamehash}{83ad9e5fef58624269c5ee8c7edfe31c}
+      \strng{authorfullhash}{83ad9e5fef58624269c5ee8c7edfe31c}
+      \field{sortinit}{J}
+      \field{sortinithash}{b2f54a9081ace9966a7cb9413811edb4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the 2019 International Conference on Management of Data}
+      \field{isbn}{9781450356435}
+      \field{series}{SIGMOD '19}
+      \field{title}{LSM-Trees and B-Trees: The Best of Both Worlds}
+      \field{year}{2019}
+      \field{pages}{1829\bibrangedash 1831}
+      \range{pages}{3}
+      \verb{doi}
+      \verb 10.1145/3299869.3300097
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1145/3299869.3300097
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1145/3299869.3300097
+      \endverb
+      \keyw{lsm-tree,key-value,data structures,b-tree,nosql,adaptive}
+    \endentry
+    \entry{betrfs}{inproceedings}{}
+      \name{author}{15}{}{%
+        {{un=0,uniquepart=base,hash=9cdea1c9755b59721627751bfd30e50b}{%
+           family={Jannen},
+           familyi={J\bibinitperiod},
+           given={William},
+           giveni={W\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=f73b33469a1dfec84c9b827437d90314}{%
+           family={Yuan},
+           familyi={Y\bibinitperiod},
+           given={Jun},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=de1ff81b8f7c4ae6a58e6dad1471ac3b}{%
+           family={Zhan},
+           familyi={Z\bibinitperiod},
+           given={Yang},
+           giveni={Y\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=058d26d1cdc7e9f82543a287223d2835}{%
+           family={Akshintala},
+           familyi={A\bibinitperiod},
+           given={Amogh},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=fd697ceca5d76473049cb7e5cca23d84}{%
+           family={Esmet},
+           familyi={E\bibinitperiod},
+           given={John},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=f90e5634b32e8a251d4da91a73909e50}{%
+           family={Jiao},
+           familyi={J\bibinitperiod},
+           given={Yizheng},
+           giveni={Y\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=d01356a3bb8f7ce65bab7b28b48f7808}{%
+           family={Mittal},
+           familyi={M\bibinitperiod},
+           given={Ankur},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=8678b35641533d05fddb28a5cc563f52}{%
+           family={Pandey},
+           familyi={P\bibinitperiod},
+           given={Prashant},
+           giveni={P\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=38f06e2380ef3025fa59247c7a378584}{%
+           family={Reddy},
+           familyi={R\bibinitperiod},
+           given={Phaneendra},
+           giveni={P\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=4ec0ed9720c33ebec0667e3209ded760}{%
+           family={Walsh},
+           familyi={W\bibinitperiod},
+           given={Leif},
+           giveni={L\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=48cf5495da7e7994fdb3355d1c93b02f}{%
+           family={Bender},
+           familyi={B\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=58fd7d5e0555331a2b10176e0e8eb0c6}{%
+           family={Farach-Colton},
+           familyi={F\bibinithyphendelim C\bibinitperiod},
+           given={Martin},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=e4f16441e3859580a81b43a585d9a8ae}{%
+           family={Johnson},
+           familyi={J\bibinitperiod},
+           given={Rob},
+           giveni={R\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=9b78801b62b0c1adb96fc9f93451db20}{%
+           family={Kuszmaul},
+           familyi={K\bibinitperiod},
+           given={Bradley\bibnamedelima C.},
+           giveni={B\bibinitperiod\bibinitdelim C\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=ae1c84fffc31fe4b93093a29dc4e668b}{%
+           family={Porter},
+           familyi={P\bibinitperiod},
+           given={Donald\bibnamedelima E.},
+           giveni={D\bibinitperiod\bibinitdelim E\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {Santa Clara, CA}%
+      }
+      \list{publisher}{1}{%
+        {USENIX Association}%
+      }
+      \strng{namehash}{e419145f2795555ca3c8d591705846b8}
+      \strng{fullhash}{d30fd8028085cf339de092e1a86b81b8}
+      \strng{bibnamehash}{d30fd8028085cf339de092e1a86b81b8}
+      \strng{authorbibnamehash}{d30fd8028085cf339de092e1a86b81b8}
+      \strng{authornamehash}{e419145f2795555ca3c8d591705846b8}
+      \strng{authorfullhash}{d30fd8028085cf339de092e1a86b81b8}
+      \field{sortinit}{J}
+      \field{sortinithash}{b2f54a9081ace9966a7cb9413811edb4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{13th USENIX Conference on File and Storage Technologies (FAST 15)}
+      \field{isbn}{978-1-931971-201}
+      \field{month}{2}
+      \field{title}{{BetrFS}: A {Right-Optimized} {Write-Optimized} File System}
+      \field{year}{2015}
+      \field{pages}{301\bibrangedash 315}
+      \range{pages}{15}
+      \verb{urlraw}
+      \verb https://www.usenix.org/conference/fast15/technical-sessions/presentation/jannen
+      \endverb
+      \verb{url}
+      \verb https://www.usenix.org/conference/fast15/technical-sessions/presentation/jannen
+      \endverb
+    \endentry
+    \entry{performace_evaluation}{inproceedings}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=27fd1f39f2c0d2916e7c113dad3ada8a}{%
+           family={Jogi},
+           familyi={J\bibinitperiod},
+           given={Vishal\bibnamedelima Dilipbhai},
+           giveni={V\bibinitperiod\bibinitdelim D\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=269466106c2eec9b276684c26effe2a6}{%
+           family={Sinha},
+           familyi={S\bibinitperiod},
+           given={Ashay},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{affef123b4e890c1ad07eb9361d6f8a2}
+      \strng{fullhash}{affef123b4e890c1ad07eb9361d6f8a2}
+      \strng{bibnamehash}{affef123b4e890c1ad07eb9361d6f8a2}
+      \strng{authorbibnamehash}{affef123b4e890c1ad07eb9361d6f8a2}
+      \strng{authornamehash}{affef123b4e890c1ad07eb9361d6f8a2}
+      \strng{authorfullhash}{affef123b4e890c1ad07eb9361d6f8a2}
+      \field{sortinit}{J}
+      \field{sortinithash}{b2f54a9081ace9966a7cb9413811edb4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{2016 3rd International Conference on Recent Advances in Information Technology (RAIT)}
+      \field{title}{Performance evaluation of MySQL, Cassandra and HBase for heavy write operation}
+      \field{year}{2016}
+      \field{pages}{586\bibrangedash 590}
+      \range{pages}{5}
+      \verb{doi}
+      \verb 10.1109/RAIT.2016.7507964
+      \endverb
+    \endentry
+    \entry{source_2Q}{inproceedings}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=ed952fcb12f38d43886fac3a150404f0}{%
+           family={Johnson},
+           familyi={J\bibinitperiod},
+           given={Theodore},
+           giveni={T\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=dccd92ea94cc6ef2ed9f4a7ca59cbdc0}{%
+           family={Shasha},
+           familyi={S\bibinitperiod},
+           given={Dennis},
+           giveni={D\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {San Francisco, CA, USA}%
+      }
+      \list{publisher}{1}{%
+        {Morgan Kaufmann Publishers Inc.}%
+      }
+      \strng{namehash}{2c8858e4c0bc84f03f87caccbc793980}
+      \strng{fullhash}{2c8858e4c0bc84f03f87caccbc793980}
+      \strng{bibnamehash}{2c8858e4c0bc84f03f87caccbc793980}
+      \strng{authorbibnamehash}{2c8858e4c0bc84f03f87caccbc793980}
+      \strng{authornamehash}{2c8858e4c0bc84f03f87caccbc793980}
+      \strng{authorfullhash}{2c8858e4c0bc84f03f87caccbc793980}
+      \field{sortinit}{J}
+      \field{sortinithash}{b2f54a9081ace9966a7cb9413811edb4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the 20th International Conference on Very Large Data Bases}
+      \field{isbn}{1558601538}
+      \field{series}{VLDB '94}
+      \field{title}{2Q: A Low Overhead High Performance Buffer Management Replacement Algorithm}
+      \field{year}{1994}
+      \field{pages}{439\bibrangedash 450}
+      \range{pages}{12}
+    \endentry
+    \entry{seq_rand}{article}{}
+      \name{author}{5}{}{%
+        {{un=0,uniquepart=base,hash=25926c5cec3663f21c0cf88f54a17b90}{%
+           family={Kaldewey},
+           familyi={K\bibinitperiod},
+           given={Tim},
+           giveni={T\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=52505d7e0baa506deafb7e60884491d1}{%
+           family={Blas},
+           familyi={B\bibinitperiod},
+           given={AD},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=bc9cd239ccc0c929c6e70c0f5fe2cc8c}{%
+           family={Hagen},
+           familyi={H\bibinitperiod},
+           given={Jeff},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=4d0359681ce486fd46f49b1b19b237e1}{%
+           family={Sedlar},
+           familyi={S\bibinitperiod},
+           given={Eric},
+           giveni={E\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=ec1ab9792f8b141f9343a5a77c90d71f}{%
+           family={Brandt},
+           familyi={B\bibinitperiod},
+           given={Scott\bibnamedelima A},
+           giveni={S\bibinitperiod\bibinitdelim A\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{8f6353085e0b3ccca1ca83f705d0b669}
+      \strng{fullhash}{62e82cc5119f334b9a035dac38adee63}
+      \strng{bibnamehash}{62e82cc5119f334b9a035dac38adee63}
+      \strng{authorbibnamehash}{62e82cc5119f334b9a035dac38adee63}
+      \strng{authornamehash}{8f6353085e0b3ccca1ca83f705d0b669}
+      \strng{authorfullhash}{62e82cc5119f334b9a035dac38adee63}
+      \field{sortinit}{K}
+      \field{sortinithash}{c02bf6bff1c488450c352b40f5d853ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{RTSS’06}
+      \field{title}{Memory matters}
+      \field{year}{2008}
+    \endentry
+    \entry{b_epsilon_vs_cola}{online}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=fbf2a1b9ce03da7b4306417f642dafa7}{%
+           family={{Khavrona}},
+           familyi={K\bibinitperiod},
+           given={Oleh-Yevhen},
+           giveni={O\bibinithyphendelim Y\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{fbf2a1b9ce03da7b4306417f642dafa7}
+      \strng{fullhash}{fbf2a1b9ce03da7b4306417f642dafa7}
+      \strng{bibnamehash}{fbf2a1b9ce03da7b4306417f642dafa7}
+      \strng{authorbibnamehash}{fbf2a1b9ce03da7b4306417f642dafa7}
+      \strng{authornamehash}{fbf2a1b9ce03da7b4306417f642dafa7}
+      \strng{authorfullhash}{fbf2a1b9ce03da7b4306417f642dafa7}
+      \field{sortinit}{K}
+      \field{sortinithash}{c02bf6bff1c488450c352b40f5d853ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{7}
+      \field{title}{B-epsilon-tree and cache-oblivious lookahead array: a comparative study of two write-optimised data structures}
+      \field{urlday}{29}
+      \field{urlmonth}{7}
+      \field{urlyear}{2022}
+      \field{year}{2021}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb http://essay.utwente.nl/87368/
+      \endverb
+      \verb{url}
+      \verb http://essay.utwente.nl/87368/
+      \endverb
+    \endentry
+    \entry{i_heart_logs}{book}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=07f8a3405ec460d8cd113fab8c24c6ae}{%
+           family={Kreps},
+           familyi={K\bibinitperiod},
+           given={J.},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {O'Reilly Media}%
+      }
+      \strng{namehash}{07f8a3405ec460d8cd113fab8c24c6ae}
+      \strng{fullhash}{07f8a3405ec460d8cd113fab8c24c6ae}
+      \strng{bibnamehash}{07f8a3405ec460d8cd113fab8c24c6ae}
+      \strng{authorbibnamehash}{07f8a3405ec460d8cd113fab8c24c6ae}
+      \strng{authornamehash}{07f8a3405ec460d8cd113fab8c24c6ae}
+      \strng{authorfullhash}{07f8a3405ec460d8cd113fab8c24c6ae}
+      \field{sortinit}{K}
+      \field{sortinithash}{c02bf6bff1c488450c352b40f5d853ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{isbn}{9781491909331}
+      \field{title}{I Heart Logs: Event Data, Stream Processing, and Data Integration}
+      \field{year}{2014}
+      \verb{urlraw}
+      \verb https://books.google.de/books?id=N9iYBAAAQBAJ
+      \endverb
+      \verb{url}
+      \verb https://books.google.de/books?id=N9iYBAAAQBAJ
+      \endverb
+    \endentry
+    \entry{leanstore}{inproceedings}{}
+      \name{author}{4}{}{%
+        {{un=0,uniquepart=base,hash=963c74f650ce23bb4617efc8276c5afb}{%
+           family={Leis},
+           familyi={L\bibinitperiod},
+           given={Viktor},
+           giveni={V\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=c0f0be20507d4d97125a9e83c36532ce}{%
+           family={Haubenschild},
+           familyi={H\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=2466c24cd22361559679d58bb1d8da60}{%
+           family={Kemper},
+           familyi={K\bibinitperiod},
+           given={Alfons},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=856106a72d787bcea4281fca718cd7d7}{%
+           family={Neumann},
+           familyi={N\bibinitperiod},
+           given={Thomas},
+           giveni={T\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{e3cffab35f84501d143c7ddee712a083}
+      \strng{fullhash}{e3cffab35f84501d143c7ddee712a083}
+      \strng{bibnamehash}{e3cffab35f84501d143c7ddee712a083}
+      \strng{authorbibnamehash}{e3cffab35f84501d143c7ddee712a083}
+      \strng{authornamehash}{e3cffab35f84501d143c7ddee712a083}
+      \strng{authorfullhash}{e3cffab35f84501d143c7ddee712a083}
+      \field{sortinit}{L}
+      \field{sortinithash}{7c47d417cecb1f4bd38d1825c427a61a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{2018 IEEE 34th International Conference on Data Engineering (ICDE)}
+      \field{title}{LeanStore: In-Memory Data Management beyond Main Memory}
+      \field{year}{2018}
+      \field{pages}{185\bibrangedash 196}
+      \range{pages}{12}
+      \verb{doi}
+      \verb 10.1109/ICDE.2018.00026
+      \endverb
+    \endentry
+    \entry{optimistic_lock_coupling}{article}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=963c74f650ce23bb4617efc8276c5afb}{%
+           family={Leis},
+           familyi={L\bibinitperiod},
+           given={Viktor},
+           giveni={V\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=c0f0be20507d4d97125a9e83c36532ce}{%
+           family={Haubenschild},
+           familyi={H\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=856106a72d787bcea4281fca718cd7d7}{%
+           family={Neumann},
+           familyi={N\bibinitperiod},
+           given={Thomas},
+           giveni={T\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{8b2988fa916cb694d1a89a7feee020fb}
+      \strng{fullhash}{8b2988fa916cb694d1a89a7feee020fb}
+      \strng{bibnamehash}{8b2988fa916cb694d1a89a7feee020fb}
+      \strng{authorbibnamehash}{8b2988fa916cb694d1a89a7feee020fb}
+      \strng{authornamehash}{8b2988fa916cb694d1a89a7feee020fb}
+      \strng{authorfullhash}{8b2988fa916cb694d1a89a7feee020fb}
+      \field{sortinit}{L}
+      \field{sortinithash}{7c47d417cecb1f4bd38d1825c427a61a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{{IEEE} Data Eng. Bull.}
+      \field{number}{1}
+      \field{title}{Optimistic Lock Coupling: {A} Scalable and Efficient General-Purpose Synchronization Method}
+      \field{volume}{42}
+      \field{year}{2019}
+      \field{pages}{73\bibrangedash 84}
+      \range{pages}{12}
+      \verb{urlraw}
+      \verb http://sites.computer.org/debull/A19mar/p73.pdf
+      \endverb
+      \verb{url}
+      \verb http://sites.computer.org/debull/A19mar/p73.pdf
+      \endverb
+    \endentry
+    \entry{cost_performance_in_modern_data_stores}{inproceedings}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=b9471d4f2555ae1ed2f70e6a3973b2d7}{%
+           family={Lomet},
+           familyi={L\bibinitperiod},
+           given={David},
+           giveni={D\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {Houston, Texas}%
+      }
+      \list{publisher}{1}{%
+        {Association for Computing Machinery}%
+      }
+      \strng{namehash}{b9471d4f2555ae1ed2f70e6a3973b2d7}
+      \strng{fullhash}{b9471d4f2555ae1ed2f70e6a3973b2d7}
+      \strng{bibnamehash}{b9471d4f2555ae1ed2f70e6a3973b2d7}
+      \strng{authorbibnamehash}{b9471d4f2555ae1ed2f70e6a3973b2d7}
+      \strng{authornamehash}{b9471d4f2555ae1ed2f70e6a3973b2d7}
+      \strng{authorfullhash}{b9471d4f2555ae1ed2f70e6a3973b2d7}
+      \field{sortinit}{L}
+      \field{sortinithash}{7c47d417cecb1f4bd38d1825c427a61a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{isbn}{9781450358538}
+      \field{series}{DAMON '18}
+      \field{title}{Cost/Performance in Modern Data Stores: How Data Caching Systems Succeed}
+      \field{year}{2018}
+      \verb{doi}
+      \verb 10.1145/3211922.3211927
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1145/3211922.3211927
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1145/3211922.3211927
+      \endverb
+    \endentry
+    \entry{write_stalls}{online}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=f6e19993e33f17d627cb212bce40f4e9}{%
+           family={Mahajan},
+           familyi={M\bibinitperiod},
+           given={Akanksha},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{f6e19993e33f17d627cb212bce40f4e9}
+      \strng{fullhash}{f6e19993e33f17d627cb212bce40f4e9}
+      \strng{bibnamehash}{f6e19993e33f17d627cb212bce40f4e9}
+      \strng{authorbibnamehash}{f6e19993e33f17d627cb212bce40f4e9}
+      \strng{authornamehash}{f6e19993e33f17d627cb212bce40f4e9}
+      \strng{authorfullhash}{f6e19993e33f17d627cb212bce40f4e9}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Write Stalls}
+      \field{urlday}{29}
+      \field{urlmonth}{7}
+      \field{urlyear}{2022}
+      \field{year}{2021}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://github.com/facebook/rocksdb/wiki/Write-Stalls
+      \endverb
+      \verb{url}
+      \verb https://github.com/facebook/rocksdb/wiki/Write-Stalls
+      \endverb
+    \endentry
+    \entry{myrocks}{article}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=13e9b8a5768313feab707ff6b751443b}{%
+           family={Matsunobu},
+           familyi={M\bibinitperiod},
+           given={Yoshinori},
+           giveni={Y\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=156eb3d646c479c2390f82065641b518}{%
+           family={Dong},
+           familyi={D\bibinitperiod},
+           given={Siying},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=80d9389cdc2b301259f03c6b1e6c6a5e}{%
+           family={Lee},
+           familyi={L\bibinitperiod},
+           given={Herman},
+           giveni={H\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {VLDB Endowment}%
+      }
+      \strng{namehash}{4c71a74735c6af34f10bdf019fe7c70a}
+      \strng{fullhash}{4c71a74735c6af34f10bdf019fe7c70a}
+      \strng{bibnamehash}{4c71a74735c6af34f10bdf019fe7c70a}
+      \strng{authorbibnamehash}{4c71a74735c6af34f10bdf019fe7c70a}
+      \strng{authornamehash}{4c71a74735c6af34f10bdf019fe7c70a}
+      \strng{authorfullhash}{4c71a74735c6af34f10bdf019fe7c70a}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{issn}{2150-8097}
+      \field{journaltitle}{Proc. VLDB Endow.}
+      \field{month}{8}
+      \field{number}{12}
+      \field{title}{MyRocks: LSM-Tree Database Storage Engine Serving Facebook's Social Graph}
+      \field{volume}{13}
+      \field{year}{2020}
+      \field{pages}{3217\bibrangedash 3230}
+      \range{pages}{14}
+      \verb{doi}
+      \verb 10.14778/3415478.3415546
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.14778/3415478.3415546
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.14778/3415478.3415546
+      \endverb
+    \endentry
+    \entry{massive_datasets}{inbook}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=107a6edd0c3fc7fc35484c30ebbb16b6}{%
+           family={Medjedovic},
+           familyi={M\bibinitperiod},
+           given={Dzejla},
+           giveni={D\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=10a8dcb4e4e3788c05822715ce4926cd}{%
+           family={Tahirovic},
+           familyi={T\bibinitperiod},
+           given={Emin},
+           giveni={E\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{2}{%
+        {Simon}%
+        {Schuster}%
+      }
+      \strng{namehash}{8b3b4ebe2e1239f97dd91cbdbeb16736}
+      \strng{fullhash}{8b3b4ebe2e1239f97dd91cbdbeb16736}
+      \strng{bibnamehash}{8b3b4ebe2e1239f97dd91cbdbeb16736}
+      \strng{authorbibnamehash}{8b3b4ebe2e1239f97dd91cbdbeb16736}
+      \strng{authornamehash}{8b3b4ebe2e1239f97dd91cbdbeb16736}
+      \strng{authorfullhash}{8b3b4ebe2e1239f97dd91cbdbeb16736}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Algorithms and Data Structures for Massive Datasets}
+      \field{year}{2022}
+      \field{pages}{254\bibrangedash 255}
+      \range{pages}{2}
+    \endentry
+    \entry{lsm_tree}{article}{}
+      \name{author}{4}{}{%
+        {{un=1,uniquepart=given,hash=98befce01145d7344d11f9c62411b327}{%
+           family={O'Neil},
+           familyi={O\bibinitperiod},
+           given={Patrick},
+           giveni={P\bibinitperiod},
+           givenun=1}}%
+        {{un=0,uniquepart=base,hash=29066e54f52f19c58e9982badbd2e6eb}{%
+           family={Cheng},
+           familyi={C\bibinitperiod},
+           given={Edward},
+           giveni={E\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=4d75d0f37cdb09afedb73d881187bafe}{%
+           family={Gawlick},
+           familyi={G\bibinitperiod},
+           given={Dieter},
+           giveni={D\bibinitperiod},
+           givenun=0}}%
+        {{un=1,uniquepart=given,hash=3ac82f3cec35774ba19e71f90421c83b}{%
+           family={O'Neil},
+           familyi={O\bibinitperiod},
+           given={Elizabeth},
+           giveni={E\bibinitperiod},
+           givenun=1}}%
+      }
+      \list{publisher}{2}{%
+        {Springer Science}%
+        {Business Media {LLC}}%
+      }
+      \strng{namehash}{c47810e4cecf7f9faf9916e56acf2b84}
+      \strng{fullhash}{c47810e4cecf7f9faf9916e56acf2b84}
+      \strng{bibnamehash}{c47810e4cecf7f9faf9916e56acf2b84}
+      \strng{authorbibnamehash}{c47810e4cecf7f9faf9916e56acf2b84}
+      \strng{authornamehash}{c47810e4cecf7f9faf9916e56acf2b84}
+      \strng{authorfullhash}{c47810e4cecf7f9faf9916e56acf2b84}
+      \field{sortinit}{O}
+      \field{sortinithash}{2cd7140a07aea5341f9e2771efe90aae}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Acta Informatica}
+      \field{month}{6}
+      \field{number}{4}
+      \field{title}{The log-structured merge-tree ({LSM}-tree)}
+      \field{volume}{33}
+      \field{year}{1996}
+      \field{pages}{351\bibrangedash 385}
+      \range{pages}{35}
+      \verb{doi}
+      \verb 10.1007/s002360050048
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1007/s002360050048
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1007/s002360050048
+      \endverb
+    \endentry
+    \entry{reference_b_epsilon_tree}{online}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=1a44018c67764934286d485c81479fd1}{%
+           family={{OSCAR Lab}},
+           familyi={O\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Github}%
+      }
+      \strng{namehash}{1a44018c67764934286d485c81479fd1}
+      \strng{fullhash}{1a44018c67764934286d485c81479fd1}
+      \strng{bibnamehash}{1a44018c67764934286d485c81479fd1}
+      \strng{authorbibnamehash}{1a44018c67764934286d485c81479fd1}
+      \strng{authornamehash}{1a44018c67764934286d485c81479fd1}
+      \strng{authorfullhash}{1a44018c67764934286d485c81479fd1}
+      \field{sortinit}{O}
+      \field{sortinithash}{2cd7140a07aea5341f9e2771efe90aae}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{\url{https://github.com/oscarlab/Be-Tree}}
+      \field{journaltitle}{GitHub repository}
+      \field{title}{Be-Tree}
+      \field{urlday}{29}
+      \field{urlmonth}{7}
+      \field{urlyear}{2022}
+      \field{year}{2017}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://github.com/oscarlab/Be-Tree
+      \endverb
+      \verb{url}
+      \verb https://github.com/oscarlab/Be-Tree
+      \endverb
+    \endentry
+    \entry{percona_server}{online}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=561495342e87ca0429def338cb5d53df}{%
+           family={Percona},
+           familyi={P\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {GitHub}%
+      }
+      \strng{namehash}{561495342e87ca0429def338cb5d53df}
+      \strng{fullhash}{561495342e87ca0429def338cb5d53df}
+      \strng{bibnamehash}{561495342e87ca0429def338cb5d53df}
+      \strng{authorbibnamehash}{561495342e87ca0429def338cb5d53df}
+      \strng{authornamehash}{561495342e87ca0429def338cb5d53df}
+      \strng{authorfullhash}{561495342e87ca0429def338cb5d53df}
+      \field{extraname}{1}
+      \field{sortinit}{P}
+      \field{sortinithash}{ff3bcf24f47321b42cb156c2cc8a8422}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{\url{https://github.com/percona/percona-server}}
+      \field{journaltitle}{GitHub repository}
+      \field{title}{Percona Server for MySQL}
+      \field{urlday}{29}
+      \field{urlmonth}{7}
+      \field{urlyear}{2022}
+      \field{year}{2022}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://github.com/percona/percona-server
+      \endverb
+      \verb{url}
+      \verb https://github.com/percona/percona-server
+      \endverb
+    \endentry
+    \entry{perconaft}{online}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=561495342e87ca0429def338cb5d53df}{%
+           family={Percona},
+           familyi={P\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {GitHub}%
+      }
+      \strng{namehash}{561495342e87ca0429def338cb5d53df}
+      \strng{fullhash}{561495342e87ca0429def338cb5d53df}
+      \strng{bibnamehash}{561495342e87ca0429def338cb5d53df}
+      \strng{authorbibnamehash}{561495342e87ca0429def338cb5d53df}
+      \strng{authornamehash}{561495342e87ca0429def338cb5d53df}
+      \strng{authorfullhash}{561495342e87ca0429def338cb5d53df}
+      \field{extraname}{2}
+      \field{sortinit}{P}
+      \field{sortinithash}{ff3bcf24f47321b42cb156c2cc8a8422}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{\url{https://github.com/percona/PerconaFT}}
+      \field{journaltitle}{GitHub repository}
+      \field{title}{PerconaFT}
+      \field{urlday}{29}
+      \field{urlmonth}{7}
+      \field{urlyear}{2022}
+      \field{year}{2022}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://github.com/percona/PerconaFT
+      \endverb
+      \verb{url}
+      \verb https://github.com/percona/PerconaFT
+      \endverb
+    \endentry
+    \entry{percona_tokudb}{online}{}
+      \list{publisher}{1}{%
+        {Percona}%
+      }
+      \field{sortinit}{P}
+      \field{sortinithash}{ff3bcf24f47321b42cb156c2cc8a8422}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Percona}
+      \field{month}{7}
+      \field{title}{Percona TokuDB - Documentation}
+      \field{urlday}{29}
+      \field{urlmonth}{7}
+      \field{urlyear}{2022}
+      \field{year}{2015}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.percona.com/doc/percona-tokudb/index.html
+      \endverb
+      \verb{url}
+      \verb https://www.percona.com/doc/percona-tokudb/index.html
+      \endverb
+    \endentry
+    \entry{percona_tokumx}{online}{}
+      \list{publisher}{1}{%
+        {Percona}%
+      }
+      \field{sortinit}{P}
+      \field{sortinithash}{ff3bcf24f47321b42cb156c2cc8a8422}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Percona}
+      \field{month}{7}
+      \field{title}{Percona TokuMX - Documentation}
+      \field{urlday}{29}
+      \field{urlmonth}{7}
+      \field{urlyear}{2022}
+      \field{year}{2015}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.percona.com/doc/percona-tokumx/index.html
+      \endverb
+      \verb{url}
+      \verb https://www.percona.com/doc/percona-tokumx/index.html
+      \endverb
+    \endentry
+    \entry{log_presentation}{unpublished}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=6dd6c8d6692547ce9bd0e4eb25337f8f}{%
+           family={Stopford},
+           familyi={S\bibinitperiod},
+           given={B.},
+           giveni={B\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{6dd6c8d6692547ce9bd0e4eb25337f8f}
+      \strng{fullhash}{6dd6c8d6692547ce9bd0e4eb25337f8f}
+      \strng{bibnamehash}{6dd6c8d6692547ce9bd0e4eb25337f8f}
+      \strng{authorbibnamehash}{6dd6c8d6692547ce9bd0e4eb25337f8f}
+      \strng{authornamehash}{6dd6c8d6692547ce9bd0e4eb25337f8f}
+      \strng{authorfullhash}{6dd6c8d6692547ce9bd0e4eb25337f8f}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{QCon}
+      \field{title}{Power of the Log: LSM and Append Only Data Structures}
+      \field{year}{2017}
+      \verb{urlraw}
+      \verb https://www.infoq.com/presentations/lsm-append-data-structures/
+      \endverb
+      \verb{url}
+      \verb https://www.infoq.com/presentations/lsm-append-data-structures/
+      \endverb
+    \endentry
+    \entry{ucsb}{online}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=4daf895da2fa42c86b7c13c60127f34b}{%
+           family={Unum},
+           familyi={U\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {GitHub}%
+      }
+      \strng{namehash}{4daf895da2fa42c86b7c13c60127f34b}
+      \strng{fullhash}{4daf895da2fa42c86b7c13c60127f34b}
+      \strng{bibnamehash}{4daf895da2fa42c86b7c13c60127f34b}
+      \strng{authorbibnamehash}{4daf895da2fa42c86b7c13c60127f34b}
+      \strng{authornamehash}{4daf895da2fa42c86b7c13c60127f34b}
+      \strng{authorfullhash}{4daf895da2fa42c86b7c13c60127f34b}
+      \field{sortinit}{U}
+      \field{sortinithash}{6901a00e45705986ee5e7ca9fd39adca}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{\url{https://github.com/unum-cloud/UCSB}}
+      \field{journaltitle}{GitHub repository}
+      \field{title}{UCSB}
+      \field{urlday}{29}
+      \field{urlmonth}{7}
+      \field{urlyear}{2022}
+      \field{year}{2022}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://github.com/unum-cloud/UCSB
+      \endverb
+      \verb{url}
+      \verb https://github.com/unum-cloud/UCSB
+      \endverb
+    \endentry
+    \entry{unum_ucsb}{online}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=fe460eff6e0959a6fa557cb46af415ed}{%
+           family={Vardanian},
+           familyi={V\bibinitperiod},
+           given={Ashot},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Unum}%
+      }
+      \strng{namehash}{fe460eff6e0959a6fa557cb46af415ed}
+      \strng{fullhash}{fe460eff6e0959a6fa557cb46af415ed}
+      \strng{bibnamehash}{fe460eff6e0959a6fa557cb46af415ed}
+      \strng{authorbibnamehash}{fe460eff6e0959a6fa557cb46af415ed}
+      \strng{authornamehash}{fe460eff6e0959a6fa557cb46af415ed}
+      \strng{authorfullhash}{fe460eff6e0959a6fa557cb46af415ed}
+      \field{sortinit}{V}
+      \field{sortinithash}{afb52128e5b4dc4b843768c0113d673b}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Unum Blog}
+      \field{month}{3}
+      \field{title}{UCSB: Extending the Ultimate Yahoo NoSQL benchmark}
+      \field{urlday}{29}
+      \field{urlmonth}{7}
+      \field{urlyear}{2022}
+      \field{year}{2022}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://unum.cloud/post/2022-03-22-ucsb/
+      \endverb
+      \verb{url}
+      \verb https://unum.cloud/post/2022-03-22-ucsb/
+      \endverb
+    \endentry
+    \entry{key_value_stores}{inproceedings}{}
+      \name{author}{4}{}{%
+        {{un=0,uniquepart=base,hash=53f3ebe26da02af7f6a67a788794264c}{%
+           family={Zhang},
+           familyi={Z\bibinitperiod},
+           given={Weitao},
+           giveni={W\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=7393b2b7d64a4096ab448276faf3f82d}{%
+           family={Xu},
+           familyi={X\bibinitperiod},
+           given={Yinlong},
+           giveni={Y\bibinitperiod},
+           givenun=0}}%
+        {{un=1,uniquepart=given,hash=89f7a4d6137f2cd27293af7f1b4ecba3}{%
+           family={Li},
+           familyi={L\bibinitperiod},
+           given={Yongkun},
+           giveni={Y\bibinitperiod},
+           givenun=1}}%
+        {{un=1,uniquepart=given,hash=381fc74a146726dcc8b68d0cf6b91c31}{%
+           family={Li},
+           familyi={L\bibinitperiod},
+           given={Dinglong},
+           giveni={D\bibinitperiod},
+           givenun=1}}%
+      }
+      \strng{namehash}{0745cb266dace269584a0c54332e142d}
+      \strng{fullhash}{0745cb266dace269584a0c54332e142d}
+      \strng{bibnamehash}{0745cb266dace269584a0c54332e142d}
+      \strng{authorbibnamehash}{0745cb266dace269584a0c54332e142d}
+      \strng{authornamehash}{0745cb266dace269584a0c54332e142d}
+      \strng{authorfullhash}{0745cb266dace269584a0c54332e142d}
+      \field{sortinit}{Z}
+      \field{sortinithash}{96892c0b0a36bb8557c40c49813d48b3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{2016 IEEE 22nd International Conference on Parallel and Distributed Systems (ICPADS)}
+      \field{title}{Improving Write Performance of LSMT-Based Key-Value Store}
+      \field{year}{2016}
+      \field{pages}{553\bibrangedash 560}
+      \range{pages}{8}
+      \verb{doi}
+      \verb 10.1109/ICPADS.2016.0079
+      \endverb
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+

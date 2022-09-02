@@ -1,0 +1,12 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{template}\PYG{o}{\PYGZlt{}}\PYG{k}{class}\PYG{+w}{ }\PYG{n+nc}{K}\PYG{p}{,}\PYG{+w}{ }\PYG{k}{class}\PYG{+w}{ }\PYG{n+nc}{V}\PYG{o}{\PYGZgt{}}
+\PYG{k}{struct}\PYG{+w}{ }\PYG{n+nc}{Upsert}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{K}\PYG{+w}{ }\PYG{n}{key}\PYG{p}{;}
+\PYG{+w}{    }\PYG{n}{V}\PYG{+w}{ }\PYG{n}{value}\PYG{p}{;}
+\PYG{+w}{    }\PYG{n}{std}\PYG{o}{::}\PYG{k+kt}{uint64\PYGZus{}t}\PYG{+w}{ }\PYG{n}{timeStamp}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{\PYGZhy{}1}\PYG{p}{;}
+\PYG{+w}{    }\PYG{k+kt}{unsigned}\PYG{+w}{ }\PYG{k+kt}{char}\PYG{+w}{ }\PYG{n}{type}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{UpsertType}\PYG{o}{::}\PYG{n}{INSERT}\PYG{p}{;}
+
+\PYG{+w}{    }\PYG{k}{auto}\PYG{+w}{ }\PYG{k}{operator}\PYG{o}{\PYGZlt{}=\PYGZgt{}}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{Upsert}\PYG{o}{\PYGZam{}}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{p}{;}
+\PYG{+w}{    }\PYG{k}{auto}\PYG{+w}{ }\PYG{k}{operator}\PYG{o}{\PYGZlt{}=\PYGZgt{}}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{K}\PYG{o}{\PYGZam{}}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{p}{;}
+\PYG{p}{\PYGZcb{};}
+\end{Verbatim}

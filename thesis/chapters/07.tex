@@ -1,0 +1,16 @@
+% !TeX root = ../main.tex
+% Add the above to each chapter to make compiling the PDF easier in some editors.
+
+\chapter{Related Work}\label{chapter:related_work}
+
+Additional work that makes use of B$^\varepsilon$-Trees includes Percona's\footnote{\href{https://www.percona.com/}{https://www.percona.com/}} PerconaFT \cite{perconaft}, a transactional key-value store used in the TokuDB storage engine \cite{percona_tokudb}. PerconaFT, and thus TokuDB, are built using a fractal tree index. In the past, fractal trees indexes used cache-oblivious lookahead arrays (COLA) \cite{b_epsilon_vs_cola} which keep their data in either fully occupied or completely empty arrays on multiple levels both in memory and on disk, similar to a LSM-Tree. Nowadays, however, fractal tree indexes extend B$^\varepsilon$-Trees by, for example, additionally guaranteeing properties like ACID \cite{percona_server}.\newline
+Examples for systems using TokuDB are TokuMX \cite{percona_tokumx}, a distribution of MongoDB\footnote{\href{https://www.mongodb.com/}{https://www.mongodb.com/}} or BetrFS \cite{betrfs}, an in-kernel file system which uses B$^\varepsilon$-Trees as the main data structure to organize data stored on disk. While BetrFS cannot match e.g. ext4\footnote{\href{https://ext4.wiki.kernel.org/}{https://ext4.wiki.kernel.org/}} when performing large sequential I/O operations, creating small files can be done orders of magnitude faster due to the nature of the used B$^\varepsilon$-Tree \cite{betrfs}.
+
+Although PerconaFT, as a key-value store, operates on the same layer as LevelDB and RocksDB, we did not include it in our benchmarks as the public repository seemed rather unmaintained and none of the tested commits were buildable on our machine\footnote{
+Tested commits:\newline
+\href{https://github.com/percona/PerconaFT/commit/930d71fcd0ec49ab21c1e83d43a778532017e5cd}{\texttt{master:930d71f}},\newline
+\href{https://github.com/percona/PerconaFT/commit/00891caaa3d73a59dc297f16719fda7adf1ba95b}{\texttt{tokudb-7.5.8:00891ca}},\newline
+\href{https://github.com/percona/PerconaFT/commit/eed6ab3f956ac1189af00da38601961792b87a9a}{\texttt{releases/tokudb-7.5:eed6ab3}},\newline
+\href{https://github.com/percona/PerconaFT/commit/cc7b1780eefa79936fd8a1d459626dddec457545}{\texttt{releases/Percona-Server-5.6.27-76.0:cc7b178}}
+}.
+Nonetheless, related comparisions between TokuDB and RocksDB \cite{tokudb_vs_rocksdb,tokudb_vs_rocksdb_2} suggest that, while TokuDB's is theoretically more performant due to its fractal tree index, LSM-Tree based systems like RocksDB can be tuned to have a higher throughput for different workload classes in practice. Percona even deprecated TokuDB in newer versions for Percona Server \cite{percona_tokudb_deprecated} and replaced it with MyRocks \cite{myrocks}, an adaptation of RocksDB for MySQL.

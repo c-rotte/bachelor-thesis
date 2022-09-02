@@ -1,0 +1,14 @@
+% !TeX root = ../main.tex
+% Add the above to each chapter to make compiling the PDF easier in some editors.
+
+\chapter{Introduction}\label{chapter:introduction}
+
+In the past, data management systems focused on storing data on hard disk drives (HDD) and caching frequently accessed index structures in main memory. HDDs were around 50 times less expensive than main memory per byte. Thus, generally, only a small part of the data was cached. However, with the falling costs of main memories in the last decades, the amount of cached data gradually increased. This resulted in main memory systems which waive IO operations at runtime and thus enable orders of magnitude higher throughput. \cite{cost_performance_in_modern_data_stores}
+
+In recent years, however, solid-state drives (SSD) have become a viable solution for data storage, although modern SSDs are still at least ten times slower than DRAM. Increasing the main memory might not always be economically feasible with growing data sizes as SSDs are generally around ten times less expensive per byte \cite{leanstore}. Such situations again require data management systems that efficiently keep data in memory and on disk while minimizing costly IO operations.
+
+The change from main memory systems to SSD-oriented database engines resulted in new implementations like Google's LevelDB \cite{leveldb}, Facebook's RocksDB \cite{rocksdb} or Apache's HBase\footnote{\href{https://hbase.apache.org/}{https://hbase.apache.org/}}. They do not use traditional index structures, like B-Trees built on top of buffer managers. Instead, these key-value stores often include different indexes optimized for rather write-heavy workloads \cite{key_value_stores}.
+
+In the scope of this thesis, we examine an example of such an index structure, the B$^\varepsilon$-Tree. Although it has been used relatively rarely for storage engines until now, its structure promises write performance comparable to the commonly used write-optimized structures. At the same time, it appears to offer read performance close to that of a typical B-Tree. \cite{b_epsilon_tree}
+
+After describing the structures in Chapter \ref{chapter:background} and Chapter \ref{chapter:be-tree} first, Chapter \ref{chapter:theoretical_performance} analyzes their behavior by comparing the respective asymptotics. In Chapter \ref{chapter:implementation}, we then introduce a design for a B$^\varepsilon$-Tree which we will use to evaluate the performance practically. The main objective of our design is to enable the throughput to scale with multiple threads. Afterward, Chapter \ref{chapter:evaluation} contains a detailed three-part benchmark comparison between all discussed structures. While Chapter \ref{chapter:related_work} and \ref{chapter:future_work} include related work and ideas for future continuation of the presented design, Chapter \ref{chapter:conclusion} concludes the outcome of this thesis. 

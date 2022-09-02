@@ -1,0 +1,29 @@
+[0] Config.pm:307> INFO - This is Biber 2.17
+[0] Config.pm:310> INFO - Logfile is 'main.blg'
+[71] biber:340> INFO - === So Aug 14, 2022, 20:41:03
+[88] Biber.pm:418> INFO - Reading 'main.bcf'
+[166] Biber.pm:972> INFO - Found 41 citekeys in bib section 0
+[179] Biber.pm:4383> INFO - Processing section 0
+[189] Biber.pm:4574> INFO - Looking for bibtex file 'bibliography.bib' for section 0
+[193] bibtex.pm:1713> INFO - LaTeX decoding ...
+[250] bibtex.pm:1518> INFO - Found BibTeX data source 'bibliography.bib'
+[575] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[575] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[575] Biber.pm:4203> INFO - Sorting list 'nty/global//global/global' of type 'entry' with template 'nty' and locale 'en-US'
+[575] Biber.pm:4209> INFO - No sort tailoring available for locale 'en-US'
+[627] bbl.pm:654> INFO - Writing 'main.bbl' with encoding 'UTF-8'
+[653] bbl.pm:757> INFO - Output to main.bbl
+[654] Biber.pm:130> WARN - legacy month field 'oct' in entry 'lsm_data_stores_leveldb_rocksdb' is not an integer - this will probably not sort properly.
+[654] Biber.pm:130> WARN - legacy month field 'jan' in entry 'hash_index' is not an integer - this will probably not sort properly.
+[654] Biber.pm:130> WARN - legacy month field 'jul' in entry 'bloom_filter' is not an integer - this will probably not sort properly.
+[654] Biber.pm:130> WARN - legacy month field 'sep' in entry 'dam' is not an integer - this will probably not sort properly.
+[654] Biber.pm:130> WARN - legacy month field 'jul' in entry 'b_tree_locking' is not an integer - this will probably not sort properly.
+[654] Biber.pm:130> WARN - legacy month field 'Mar' in entry 'unum_ucsb' is not an integer - this will probably not sort properly.
+[654] Biber.pm:130> WARN - legacy month field 'Jul' in entry 'percona_tokudb' is not an integer - this will probably not sort properly.
+[654] Biber.pm:130> WARN - legacy month field 'July' in entry 'b_epsilon_vs_cola' is not an integer - this will probably not sort properly.
+[654] Biber.pm:130> WARN - legacy month field 'Jul' in entry 'percona_tokumx' is not an integer - this will probably not sort properly.
+[654] Biber.pm:130> WARN - legacy month field 'Aug' in entry 'tokudb_vs_rocksdb_2' is not an integer - this will probably not sort properly.
+[654] Biber.pm:130> WARN - legacy month field 'May' in entry 'percona_tokudb_deprecated' is not an integer - this will probably not sort properly.
+[654] Biber.pm:130> WARN - legacy month field 'aug' in entry 'myrocks' is not an integer - this will probably not sort properly.
+[654] Biber.pm:130> WARN - legacy month field 'dec' in entry 'buffer_managers' is not an integer - this will probably not sort properly.
+[654] Biber.pm:132> INFO - WARNINGS: 13
